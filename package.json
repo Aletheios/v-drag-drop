@@ -4,6 +4,10 @@
     "description": "Minimalistic drag & drop directives for Vue.js 2",
     "author": "Simon Ismair",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Aletheios/v-drag-drop"
+    },
     "main": "dist/vDragDrop.js",
     "scripts": {
         "build": "webpack --env dev && webpack --env build",
