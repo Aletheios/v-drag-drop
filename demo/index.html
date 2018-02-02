@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>v-drag-drop</title>
+        <meta charset="utf-8">
+
+        <script src="https://unpkg.com/vue@2.5.13/dist/vue.min.js"></script>
+        <script src="../dist/vDragDrop.js"></script>
+
+        <style>
+            html, body {
+                font-family: monospace;
+                font-size: 16px;
+            }
+            .draggableContainer {
+                width: 30px;
+                height: 30px;
+                margin: 5px;
+                display: inline-block;
+                background: lightgray;
+            }
+            .droppableContainer {
+                width: 200px;
+                height: 100px;
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app">
+            <h2>v-drag-drop</h2>
+
+            <h4>Lists Items</h4>
+            <list-items-demo></list-items-demo>
+
+            <h4>Containers</h4>
+            <containers-demo></containers-demo>
+        </div>
+
+
+        <!-- List items demo -->
+        <script type="text/x-template" id="listItemsDemoTemplate">
+            <ul>
+                <li v-for="item in items" :key="item"
+                    v-draggable="item" @drag-start="onDragStart" @drag-end="onDragEnd"
+                    v-droppable @drag-drop="dropItem => onDropped(dropItem, item)">
+                    {{ item }}
+                </li>
+            </ul>
+        </script>
+        <script>
+            Vue.component('list-items-demo', {
+                template: '#listItemsDemoTemplate',
+                data: () => ({ items: ['foo', 'bar', 'baz'] }),
+                methods: {
+                    onDragStart(item) {
+                        console.log('drag start', item);
+                    },
+                    onDragEnd(item) {
+                        console.log('drag end', item);
+                    },
+                    onDropped(dropItem, item) {
+                        console.log('dropped', dropItem, 'onto', item);
+                    }
+                }
+            });
+        </script>
+
+
+        <!-- Containers demo -->
+        <script type="text/x-template" id="containersDemoTemplate">
+            <div>
+                <div v-for="i in [1,2,3]" :key="i"
+                     v-if="!itemsInContainer.includes(i)"
+                     v-draggable.move="getObjectToDrag(i)"
+                     class="draggableContainer">
+                    {{ i }}
+                </div>
+                <div v-droppable @drag-drop="onContainerDropped" class="droppableContainer">
+                    <div v-for="i in itemsInContainer" :key="i" class="draggableContainer">{{ i }}</div>
+                </div>
+            </div>
+        </script>
+        <script>
+            Vue.component('containers-demo', {
+                template: '#containersDemoTemplate',
+                data: () => ({ itemsInContainer: [] }),
+                methods: {
+                    getObjectToDrag(i) {
+                        return { foobar: i };
+                    },
+                    onContainerDropped(dropItem) {
+                        this.itemsInContainer.push(dropItem.foobar);
+                        console.log('dropped container', dropItem);
+                    }
+                }
+            });
+        </script>
+
+
+        <!-- Initialization -->
+        <script>
+            Vue.use(vDragDrop);
+            
+            new Vue({ el: '#app' });
+        </script>
+    </body>
+</html>
