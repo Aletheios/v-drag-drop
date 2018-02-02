@@ -112,6 +112,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var transferredData = {};
+var dragInProgressKey = null;
 
 function getListeners(vnode) {
     if (vnode.data && vnode.data.on) {
@@ -126,6 +127,7 @@ function getListeners(vnode) {
 var draggable = exports.draggable = {
     inserted: function inserted(el, binding, vnode) {
         var dragData = binding.value;
+        var namespace = binding.arg || null;
         var listeners = getListeners(vnode);
 
         el.setAttribute('draggable', true);
@@ -134,26 +136,30 @@ var draggable = exports.draggable = {
             el.style.cursor = 'move';
         }
 
-        // Only strings are supported in dataTransfer, therefore we only transfer the key and use an external store
+        // Only transfer the key and use an external store for the actual data
         var transferKey = +new Date() + '';
 
         el.addEventListener('dragstart', function (event) {
-            if (listeners['drag-start']) {
-                listeners['drag-start'](dragData);
-            }
+            dragInProgressKey = transferKey;
 
             transferredData[transferKey] = {
                 dragData: dragData,
+                namespace: namespace,
                 onDropCallback: null // will be set in droppable directive
             };
 
             event.dataTransfer.setData('text', transferKey);
-
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
+
+            if (listeners['drag-start']) {
+                listeners['drag-start'](dragData);
+            }
         }, false);
 
         el.addEventListener('dragend', function () {
+            dragInProgressKey = null;
+
             if (transferredData[transferKey]) {
                 if (typeof transferredData[transferKey].onDropCallback === 'function') {
                     var callback = transferredData[transferKey].onDropCallback;
@@ -162,8 +168,6 @@ var draggable = exports.draggable = {
                     }, 0);
                 }
                 delete transferredData[transferKey];
-            } else {
-                console.warn('v-drag-drop: No draggable data found!'); // eslint-disable-line
             }
 
             if (listeners['drag-end']) {
@@ -176,13 +180,50 @@ var draggable = exports.draggable = {
 var droppable = exports.droppable = {
     inserted: function inserted(el, binding, vnode) {
         var listeners = getListeners(vnode);
+        var dropTargetNamespace = binding.arg || null;
+
+        function getDraggedConfig(key) {
+            if (!key) {
+                return null;
+            }
+            return transferredData[key] || null;
+        }
 
         // Necessary to enable drop event
         el.addEventListener('dragenter', function (event) {
             event.preventDefault();
+
+            if (listeners['drag-enter']) {
+                var _getDraggedConfig = getDraggedConfig(dragInProgressKey),
+                    dragData = _getDraggedConfig.dragData;
+
+                listeners['drag-enter'](dragData);
+            }
         }, false);
+
         el.addEventListener('dragover', function (event) {
+            var _getDraggedConfig2 = getDraggedConfig(dragInProgressKey),
+                dragData = _getDraggedConfig2.dragData,
+                namespace = _getDraggedConfig2.namespace;
+
+            if (!namespace || !dropTargetNamespace || namespace === dropTargetNamespace) {
+                event.preventDefault(); // required to allow dropping
+            }
+
+            if (listeners['drag-over']) {
+                listeners['drag-over'](dragData);
+            }
+        }, false);
+
+        el.addEventListener('dragleave', function (event) {
             event.preventDefault();
+
+            if (listeners['drag-leave']) {
+                var _getDraggedConfig3 = getDraggedConfig(dragInProgressKey),
+                    dragData = _getDraggedConfig3.dragData;
+
+                listeners['drag-leave'](dragData);
+            }
         }, false);
 
         el.addEventListener('drop', function (event) {
@@ -190,14 +231,16 @@ var droppable = exports.droppable = {
             event.preventDefault();
 
             var key = event.dataTransfer.getData('text');
-            var data = transferredData[key] ? transferredData[key].dragData : null;
-            if (!data) {
-                console.warn('v-drag-drop: No droppable data found!'); // eslint-disable-line
-            }
+
+            var _getDraggedConfig4 = getDraggedConfig(key),
+                dragData = _getDraggedConfig4.dragData;
 
             transferredData[key].onDropCallback = function () {
-                if (listeners['drag-drop'] && data) {
-                    listeners['drag-drop'](data);
+                if (listeners['drag-leave']) {
+                    listeners['drag-leave'](dragData);
+                }
+                if (listeners['drag-drop']) {
+                    listeners['drag-drop'](dragData);
                 }
             };
         }, false);

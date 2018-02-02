@@ -19,10 +19,17 @@
                 display: inline-block;
                 background: lightgray;
             }
+            .draggableContainer.dark {
+                background: gray;
+            }
             .droppableContainer {
                 width: 200px;
-                height: 100px;
-                border: 1px solid black;
+                height: 50px;
+                margin: 5px;
+                border: 1px solid lightgray;
+            }
+            .droppableContainer.dark {
+                border: 1px solid gray;
             }
         </style>
     </head>
@@ -30,12 +37,16 @@
     <body>
         <div id="app">
             <h2>v-drag-drop</h2>
+            Open the console to see log messages.
 
             <h4>Lists Items</h4>
             <list-items-demo></list-items-demo>
 
             <h4>Containers</h4>
             <containers-demo></containers-demo>
+
+            <h4>Namespaces</h4>
+            <namespaces-demo></namespaces-demo>
         </div>
 
 
@@ -43,8 +54,9 @@
         <script type="text/x-template" id="listItemsDemoTemplate">
             <ul>
                 <li v-for="item in items" :key="item"
-                    v-draggable="item" @drag-start="onDragStart" @drag-end="onDragEnd"
-                    v-droppable @drag-drop="dropItem => onDropped(dropItem, item)">
+                    v-draggable.move="item" @drag-start="onDragStart" @drag-end="onDragEnd"
+                    v-droppable.move @drag-drop="dropItem => onDropped(dropItem, item)"
+                    @drag-enter="onDragEnter" @drag-leave="onDragLeave">
                     {{ item }}
                 </li>
             </ul>
@@ -60,8 +72,14 @@
                     onDragEnd(item) {
                         console.log('drag end', item);
                     },
-                    onDropped(dropItem, item) {
-                        console.log('dropped', dropItem, 'onto', item);
+                    onDropped(item, currentItem) {
+                        console.log('dropped', item, 'onto', currentItem);
+                    },
+                    onDragEnter(item) {
+                        console.log('drag enter', item);
+                    },
+                    onDragLeave(item) {
+                        console.log('drag leave', item);
                     }
                 }
             });
@@ -93,6 +111,27 @@
                     onContainerDropped(dropItem) {
                         this.itemsInContainer.push(dropItem.foobar);
                         console.log('dropped container', dropItem);
+                    }
+                }
+            });
+        </script>
+
+
+        <!-- Namespaces demo -->
+        <script type="text/x-template" id="namespacesDemoTemplate">
+            <div>
+                <div v-for="i in [1,2,3]" :key="i" v-draggable:namespace1.move="i" class="draggableContainer">{{ i }}</div>
+                <div v-for="i in [4,5,6]" :key="i" v-draggable:namespace2.move="i" class="draggableContainer dark">{{ i }}</div>
+                <div v-droppable:namespace1 @drag-drop="item => onContainerDropped('namespace1', item)" class="droppableContainer"></div>
+                <div v-droppable:namespace2 @drag-drop="item => onContainerDropped('namespace2', item)" class="droppableContainer dark"></div>
+            </div>
+        </script>
+        <script>
+            Vue.component('namespaces-demo', {
+                template: '#namespacesDemoTemplate',
+                methods: {
+                    onContainerDropped(namespace, item) {
+                        console.log('dropped', item, 'in namespace', namespace);
                     }
                 }
             });

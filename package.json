@@ -1,7 +1,8 @@
 {
     "name": "v-drag-drop",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Minimalistic drag & drop directives for Vue.js 2",
+    "keywords": ["vue", "vuejs", "vuejs2", "vue2", "directive", "drag-and-drop", "javascript"],
     "author": "Simon Ismair",
     "license": "MIT",
     "repository": {
@@ -20,7 +21,6 @@
         "babel-eslint": "8.2.1",
         "babel-loader": "7.1.2",
         "babel-plugin-add-module-exports": "0.2.1",
-        "babel-polyfill": "6.26.0",
         "babel-preset-env": "1.6.1",
         "babel-preset-stage-2": "6.24.1",
         "concurrently": "3.5.1",

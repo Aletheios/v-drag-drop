@@ -1,4 +1,5 @@
 const transferredData = { };
+let dragInProgressKey = null;
 
 function getListeners(vnode) {
     if (vnode.data && vnode.data.on) {
@@ -13,6 +14,7 @@ function getListeners(vnode) {
 export const draggable = {
     inserted(el, binding, vnode) {
         const dragData = binding.value;
+        const namespace = binding.arg || null;
         const listeners = getListeners(vnode);
 
         el.setAttribute('draggable', true);
@@ -21,35 +23,36 @@ export const draggable = {
             el.style.cursor = 'move';
         }
 
-        // Only strings are supported in dataTransfer, therefore we only transfer the key and use an external store
+        // Only transfer the key and use an external store for the actual data
         const transferKey = +new Date() + '';
 
         el.addEventListener('dragstart', function(event){
-            if (listeners['drag-start']) {
-                listeners['drag-start'](dragData);
-            }
+            dragInProgressKey = transferKey;
             
             transferredData[transferKey] = {
                 dragData,
+                namespace,
                 onDropCallback: null // will be set in droppable directive
             };
 
             event.dataTransfer.setData('text', transferKey);
-
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
+
+            if (listeners['drag-start']) {
+                listeners['drag-start'](dragData);
+            }
         }, false);
         
         el.addEventListener('dragend', function(){
+            dragInProgressKey = null;
+
             if (transferredData[transferKey]) {
                 if (typeof transferredData[transferKey].onDropCallback === 'function') {
                     const callback = transferredData[transferKey].onDropCallback;
                     setTimeout(() => callback(), 0);
                 }
                 delete transferredData[transferKey];
-            }
-            else {
-                console.warn('v-drag-drop: No draggable data found!'); // eslint-disable-line
             }
 
             if (listeners['drag-end']) {
@@ -62,13 +65,43 @@ export const draggable = {
 export const droppable = {
     inserted(el, binding, vnode) {
         const listeners = getListeners(vnode);
+        const dropTargetNamespace = binding.arg || null;
+
+        function getDraggedConfig(key) {
+            if (!key) {
+                return null;
+            }
+            return transferredData[key] || null;
+        }
 
         // Necessary to enable drop event
         el.addEventListener('dragenter', function(event){
             event.preventDefault();
+
+            if (listeners['drag-enter']) {
+                const { dragData } = getDraggedConfig(dragInProgressKey);
+                listeners['drag-enter'](dragData);
+            }
         }, false);
+
         el.addEventListener('dragover', function(event){
+            const { dragData, namespace } = getDraggedConfig(dragInProgressKey);
+            if (!namespace || !dropTargetNamespace || namespace === dropTargetNamespace) {
+                event.preventDefault(); // required to allow dropping
+            }
+
+            if (listeners['drag-over']) {
+                listeners['drag-over'](dragData);
+            }
+        }, false);
+
+        el.addEventListener('dragleave', function(event){
             event.preventDefault();
+
+            if (listeners['drag-leave']) {
+                const { dragData } = getDraggedConfig(dragInProgressKey);
+                listeners['drag-leave'](dragData);
+            }
         }, false);
 
         el.addEventListener('drop', function(event){
@@ -76,14 +109,14 @@ export const droppable = {
             event.preventDefault();
             
             const key = event.dataTransfer.getData('text');
-            const data = transferredData[key] ? transferredData[key].dragData : null;
-            if (!data) {
-                console.warn('v-drag-drop: No droppable data found!'); // eslint-disable-line
-            }
+            const { dragData } = getDraggedConfig(key);
             
             transferredData[key].onDropCallback = function(){
-                if (listeners['drag-drop'] && data) {
-                    listeners['drag-drop'](data);
+                if (listeners['drag-leave']) {
+                    listeners['drag-leave'](dragData);
+                }
+                if (listeners['drag-drop']) {
+                    listeners['drag-drop'](dragData);
                 }
             };
         }, false);
