@@ -32,6 +32,13 @@ export default {
                 listeners['drag-start'](dragData);
             }
         }, false);
+
+
+        el.addEventListener('drag', function(){
+            if (listeners['drag-move']) {
+                listeners['drag-move'](dragData);
+            }
+        }, false);
         
         el.addEventListener('dragend', function(){
             Common.dragInProgressKey = null;

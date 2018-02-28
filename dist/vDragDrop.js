@@ -70,18 +70,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(1);
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -90,16 +83,28 @@ module.exports = __webpack_require__(1);
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _vDragDrop = __webpack_require__(2);
-
 exports.default = {
-    install: function install(Vue) {
-        Vue.directive('draggable', _vDragDrop.draggable);
-        Vue.directive('droppable', _vDragDrop.droppable);
+    transferredData: {},
+    dragInProgressKey: null,
+
+    getListeners: function getListeners(vnode) {
+        if (vnode.data && vnode.data.on) {
+            return vnode.data.on;
+        }
+        if (vnode.componentOptions && vnode.componentOptions.listeners) {
+            return vnode.componentOptions.listeners;
+        }
+        return {};
     }
 };
-module.exports = exports['default'];
+module.exports = exports["default"];
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(2);
+
 
 /***/ }),
 /* 2 */
@@ -111,24 +116,47 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var transferredData = {};
-var dragInProgressKey = null;
 
-function getListeners(vnode) {
-    if (vnode.data && vnode.data.on) {
-        return vnode.data.on;
-    }
-    if (vnode.componentOptions && vnode.componentOptions.listeners) {
-        return vnode.componentOptions.listeners;
-    }
-    return {};
-}
+var _draggable = __webpack_require__(3);
 
-var draggable = exports.draggable = {
+var _draggable2 = _interopRequireDefault(_draggable);
+
+var _droppable = __webpack_require__(4);
+
+var _droppable2 = _interopRequireDefault(_droppable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    install: function install(Vue) {
+        Vue.directive('draggable', _draggable2.default);
+        Vue.directive('droppable', _droppable2.default);
+    }
+};
+module.exports = exports['default'];
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _common = __webpack_require__(0);
+
+var _common2 = _interopRequireDefault(_common);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
     inserted: function inserted(el, binding, vnode) {
         var dragData = binding.value;
         var namespace = binding.arg || null;
-        var listeners = getListeners(vnode);
+        var listeners = _common2.default.getListeners(vnode);
 
         el.setAttribute('draggable', true);
 
@@ -140,9 +168,9 @@ var draggable = exports.draggable = {
         var transferKey = +new Date() + '';
 
         el.addEventListener('dragstart', function (event) {
-            dragInProgressKey = transferKey;
+            _common2.default.dragInProgressKey = transferKey;
 
-            transferredData[transferKey] = {
+            _common2.default.transferredData[transferKey] = {
                 dragData: dragData,
                 namespace: namespace,
                 onDropCallback: null // will be set in droppable directive
@@ -157,17 +185,23 @@ var draggable = exports.draggable = {
             }
         }, false);
 
-        el.addEventListener('dragend', function () {
-            dragInProgressKey = null;
+        el.addEventListener('drag', function () {
+            if (listeners['drag-move']) {
+                listeners['drag-move'](dragData);
+            }
+        }, false);
 
-            if (transferredData[transferKey]) {
-                if (typeof transferredData[transferKey].onDropCallback === 'function') {
-                    var callback = transferredData[transferKey].onDropCallback;
+        el.addEventListener('dragend', function () {
+            _common2.default.dragInProgressKey = null;
+
+            if (_common2.default.transferredData[transferKey]) {
+                if (typeof _common2.default.transferredData[transferKey].onDropCallback === 'function') {
+                    var callback = _common2.default.transferredData[transferKey].onDropCallback;
                     setTimeout(function () {
                         return callback();
                     }, 0);
                 }
-                delete transferredData[transferKey];
+                delete _common2.default.transferredData[transferKey];
             }
 
             if (listeners['drag-end']) {
@@ -176,17 +210,35 @@ var draggable = exports.draggable = {
         });
     }
 };
+module.exports = exports['default'];
 
-var droppable = exports.droppable = {
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _common = __webpack_require__(0);
+
+var _common2 = _interopRequireDefault(_common);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
     inserted: function inserted(el, binding, vnode) {
-        var listeners = getListeners(vnode);
+        var listeners = _common2.default.getListeners(vnode);
         var dropTargetNamespace = binding.arg || null;
 
         function getDraggedConfig(key) {
             if (!key) {
                 return null;
             }
-            return transferredData[key] || null;
+            return _common2.default.transferredData[key] || null;
         }
 
         // Necessary to enable drop event
@@ -194,7 +246,7 @@ var droppable = exports.droppable = {
             event.preventDefault();
 
             if (listeners['drag-enter']) {
-                var _getDraggedConfig = getDraggedConfig(dragInProgressKey),
+                var _getDraggedConfig = getDraggedConfig(_common2.default.dragInProgressKey),
                     dragData = _getDraggedConfig.dragData;
 
                 listeners['drag-enter'](dragData);
@@ -202,7 +254,7 @@ var droppable = exports.droppable = {
         }, false);
 
         el.addEventListener('dragover', function (event) {
-            var _getDraggedConfig2 = getDraggedConfig(dragInProgressKey),
+            var _getDraggedConfig2 = getDraggedConfig(_common2.default.dragInProgressKey),
                 dragData = _getDraggedConfig2.dragData,
                 namespace = _getDraggedConfig2.namespace;
 
@@ -219,7 +271,7 @@ var droppable = exports.droppable = {
             event.preventDefault();
 
             if (listeners['drag-leave']) {
-                var _getDraggedConfig3 = getDraggedConfig(dragInProgressKey),
+                var _getDraggedConfig3 = getDraggedConfig(_common2.default.dragInProgressKey),
                     dragData = _getDraggedConfig3.dragData;
 
                 listeners['drag-leave'](dragData);
@@ -235,7 +287,7 @@ var droppable = exports.droppable = {
             var _getDraggedConfig4 = getDraggedConfig(key),
                 dragData = _getDraggedConfig4.dragData;
 
-            transferredData[key].onDropCallback = function () {
+            _common2.default.transferredData[key].onDropCallback = function () {
                 if (listeners['drag-leave']) {
                     listeners['drag-leave'](dragData);
                 }
@@ -246,6 +298,7 @@ var droppable = exports.droppable = {
         }, false);
     }
 };
+module.exports = exports['default'];
 
 /***/ })
 /******/ ]);

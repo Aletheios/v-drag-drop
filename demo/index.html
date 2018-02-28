@@ -54,7 +54,7 @@
         <script type="text/x-template" id="listItemsDemoTemplate">
             <ul>
                 <li v-for="item in items" :key="item"
-                    v-draggable.move="item" @drag-start="onDragStart" @drag-end="onDragEnd"
+                    v-draggable.move="item" @drag-start="onDragStart" @drag-move="onDragMove" @drag-end="onDragEnd"
                     v-droppable.move @drag-drop="dropItem => onDropped(dropItem, item)"
                     @drag-enter="onDragEnter" @drag-leave="onDragLeave">
                     {{ item }}
@@ -68,6 +68,9 @@
                 methods: {
                     onDragStart(item) {
                         console.log('drag start', item);
+                    },
+                    onDragMove(item) {
+                        console.log('drag move', item);
                     },
                     onDragEnd(item) {
                         console.log('drag end', item);

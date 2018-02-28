@@ -4,12 +4,19 @@
 
 Designed to encapsulate some of the peculiarities of the Drag & Drop API and make it easier to use with Vue.js.
 
-## Usage
+## Table of Contents
 
-Install *v-drag-drop* via *npm*:
+* [Installation](#installation)
+* [Usage](#usage)
+* [API](#api)
+
+
+## Installation
+
+Install `v-drag-drop` via npm:
 
 ```bash
-npm install --save-exact v-drag-drop
+npm install --save v-drag-drop
 ```
 
 Then import it in your project:
@@ -29,15 +36,26 @@ Or include the files via `<script>` tag:
 </script>
 ```
 
-Full usage example:
+
+## Usage
+
+The following template example is the minimum setup required to get a draggable element and a drop zone with `v-drag-drop`:
 
 ```html
-<div v-draggable:namespace.move="myData"
+<div v-draggable="myData"></div>
+<div v-droppable @drag-drop="handleDrop"></div>
+```
+
+This template example shows all the features supported by `v-drag-drop`. Check the [API section](#api) for details.
+
+```html
+<div v-draggable.move="myData"
      @drag-start="onDragStart"
+     @drag-move="onDragMove"
      @drag-end="onDragEnd">
 </div>
 
-<div v-droppable:namespace
+<div v-droppable
      @drag-enter="onDragEnter"
      @drag-over="onDragOver"
      @drag-leave="onDragLeave"
@@ -45,35 +63,61 @@ Full usage example:
 </div>
 ```
 
+Also check the demos in the `demo` directory. You can run the demos with `npm run dev`.
+
+
+## API
+
+`v-drag-drop` provides two directives: `v-draggable` for draggable elements and `v-droppable` for drop zones.
+
+### `v-draggable`
+
+#### Value
+
+This is the data you want to transfer to the drop zone. The data can be arbitrary objects or primitives.
+
+Example:
+
 ```javascript
-Vue.component('myComponent', {
+Vue.component('my-component', {
+    template: '<div v-draggable="myData"></div>',
     data() {
-        return { myData: { foobar: 42 } };
-    },
-    methods: {
-        onDragStart: data => console.log(data),
-        onDragEnd: data => console.log(data),
-        onDragEnter: data => console.log(data),
-        onDragOver: data => console.log(data),
-        onDragLeave: data => console.log(data),
-        onDragDrop: data => console.log(data)
+        return {
+            myData: { foobar: 42 }
+        };
     }
 });
 ```
 
-## API Description
+#### Modifiers
 
-### `v-draggable`
+* `move`: Optional. Add this modifier to get a crosshair cursor on the element: `v-draggable.move`
 
-* Mark draggable elements with `v-draggable`
-* Pass the data you want to transfer: `v-draggable="myData"` The data can be arbitrary objects or primitives.
-* Optionally add the `move` modifier to get a crosshair cursor on the element: `v-draggable.move`
-* Optionally limit drop targets by adding a namespace argument: `v-draggable:namespace` When no namespace is given, the items can be dropped on any target.
-* When the user starts dragging, the `drag-start` event is emitted. When dragging stops, the `drag-end` event is triggered. The event listeners are called with the dragged data.
+#### Events
+
+All event listeners are called with the dragged data as first argument.
+
+* `drag-start`: Fired when the user starts dragging.
+
+* `drag-move`: Fired repeatedly while dragging is in progress.
+
+* `drag-end`: Fired when dragging is finished.
+
 
 ### `v-droppable`
 
-* Mark drop targets with `v-droppable`
-* Optionally add a namespace to define where draggable items may come from: `v-droppable:namespace` When no namespace is given, all items can be dropped on the target.
-* When a dragged item enters the drop target, the `drag-enter` event is emitted. While it is over the target, `drag-over` is triggered. When it leaves the target, the `drag-leave` event is triggered. The event listeners are called with the dragged data.
-* When a drop occurs, the `drag-drop` event is emitted with the transferred data.
+#### Value
+
+Unused.
+
+#### Events
+
+All event listeners are called with the dragged data as first argument.
+
+* `drag-enter`: Fired when a dragged item enters the drop zone.
+
+* `drag-over`: Fired repeatedly while a dragged item is over the drop zone.
+
+* `drag-leave`: Fired when a dragged item leaves the drop zone.
+
+* `drag-drop`: Fired when an item has been dropped on the drop zone. Called with the dragged data only.
