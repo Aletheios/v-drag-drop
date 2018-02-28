@@ -1,4 +1,5 @@
-import { draggable, droppable } from '@/vDragDrop';
+import draggable from '@/draggable';
+import droppable from '@/droppable';
 
 export default {
     install(Vue) {
