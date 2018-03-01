@@ -49,13 +49,13 @@ The following template example is the minimum setup required to get a draggable 
 This template example shows all the features supported by `v-drag-drop`. Check the [API section](#api) for details.
 
 ```html
-<div v-draggable.move="myData"
+<div v-draggable:namespace.dynamic.move="myData"
      @drag-start="onDragStart"
      @drag-move="onDragMove"
      @drag-end="onDragEnd">
 </div>
 
-<div v-droppable
+<div v-droppable:namespace.dynamic
      @drag-enter="onDragEnter"
      @drag-over="onDragOver"
      @drag-leave="onDragLeave"
@@ -63,7 +63,7 @@ This template example shows all the features supported by `v-drag-drop`. Check t
 </div>
 ```
 
-Also check the demos in the `demo` directory. You can run the demos with `npm run dev`.
+Also check the demos in the `demo` directory. You can run the demos with `npm run demo`. Open your browser at `http://127.0.0.1:1337/demo`.
 
 
 ## API
@@ -89,9 +89,38 @@ Vue.component('my-component', {
 });
 ```
 
+#### Argument
+
+You can pass an argument to `v-draggable`. This argument is a namespace that defines in which drop zones the draggable item can be dropped (requires the drop zone to have the same namespace). Namespaces allow you to place multiple drop zones on the same page that accept different items.
+
+If no namespace is defined (default), the items can be dropped on any drop zone. Namespaces can be assigned dynamically, see the `dynamic` modifier.
+
+Example:
+
+```html
+<div v-draggable:foo="myData"></div>
+<div v-droppable:foo @drag-drop="handleDrop"></div> <!-- supports drop -->
+<div v-droppable:bar @drag-drop="handleDrop"></div> <!-- drop prevented -->
+```
+
 #### Modifiers
 
 * `move`: Optional. Add this modifier to get a crosshair cursor on the element: `v-draggable.move`
+
+* `dynamic`: Optional. Enables dynamic namespace names. When `dynamic` is set, the given namespace attribute is treated as a property name; the property must be of type `String` and must be present in the parent component (can be a computed property).
+
+    Example:
+    ```javascript
+    Vue.component('my-component', {
+        template: '<div v-draggable:myNamespace.dynamic="myData"></div>',
+        data() {
+            return {
+                myData: { foobar: 42 },
+                myNamespace: 'actualNamespaceName' // can be changed later
+            };
+        }
+    });
+    ```
 
 #### Events
 
@@ -110,9 +139,17 @@ All event listeners are called with the dragged data as first argument.
 
 Unused.
 
+#### Argument
+
+The namespace of the drop zone, see `v-draggable`. If no namespace is given, all items can be dropped on this drop zone.
+
+#### Modifiers
+
+* `dynamic`: Optional. Enables dynamic namespace names. See `v-draggable`.
+
 #### Events
 
-All event listeners are called with the dragged data as first argument.
+All event listeners (except `drag-drop`) are called with two parameters: (1) the dragged data, (2) whether or not dropping will be possible (i.e. the namespaces of the dragged item and the drop zone match)
 
 * `drag-enter`: Fired when a dragged item enters the drop zone.
 

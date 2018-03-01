@@ -47,6 +47,9 @@
 
             <h4>Namespaces</h4>
             <namespaces-demo></namespaces-demo>
+
+            <h4>Dynamic Namespaces</h4>
+            <dynamic-namespaces-demo></dynamic-namespaces-demo>
         </div>
 
 
@@ -70,7 +73,7 @@
                         console.log('drag start', item);
                     },
                     onDragMove(item) {
-                        console.log('drag move', item);
+                        console.log('dragging', item);
                     },
                     onDragEnd(item) {
                         console.log('drag end', item);
@@ -78,11 +81,11 @@
                     onDropped(item, currentItem) {
                         console.log('dropped', item, 'onto', currentItem);
                     },
-                    onDragEnter(item) {
-                        console.log('drag enter', item);
+                    onDragEnter(item, isDropPossible) {
+                        console.log('drag enter', item, 'drop possible?', isDropPossible);
                     },
-                    onDragLeave(item) {
-                        console.log('drag leave', item);
+                    onDragLeave(item, isDropPossible) {
+                        console.log('drag leave', item, 'drop possible?', isDropPossible);
                     }
                 }
             });
@@ -136,6 +139,40 @@
                     onContainerDropped(namespace, item) {
                         console.log('dropped', item, 'in namespace', namespace);
                     }
+                }
+            });
+        </script>
+
+
+        <!-- Dynamic namespaces demo -->
+        <script type="text/x-template" id="dynamicNamespacesDemoTemplate">
+            <div>
+                <div v-for="i in [1,2,3]" :key="i" v-draggable:namespace1.move="i" class="draggableContainer">{{ i }}</div>
+                <div v-for="i in [4,5,6]" :key="i" v-draggable:namespace2.move="i" class="draggableContainer dark">{{ i }}</div>
+                <div v-droppable:namespace1.dynamic @drag-drop="item => onContainerDropped('namespace1', item)" :class="{ droppableContainer: true, dark: namespace1 === 'namespace2' }"></div>
+                <div v-droppable:namespace2.dynamic @drag-drop="item => onContainerDropped('namespace2', item)" :class="{ droppableContainer: true, dark: namespace2 === 'namespace2' }"></div>
+            </div>
+        </script>
+        <script>
+            Vue.component('dynamic-namespaces-demo', {
+                template: '#dynamicNamespacesDemoTemplate',
+                methods: {
+                    onContainerDropped(namespace, item) {
+                        console.log('dropped', item, 'in namespace', namespace);
+                    }
+                },
+                data() {
+                    return {
+                        namespace1: 'namespace1',
+                        namespace2: 'namespace2'
+                    };
+                },
+                mounted() {
+                    setInterval(() => {
+                        const tmp = this.namespace1;
+                        this.namespace1 = this.namespace2;
+                        this.namespace2 = tmp;
+                    }, 1000);
                 }
             });
         </script>

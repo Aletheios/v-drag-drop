@@ -3,7 +3,6 @@ import Common from '@/common';
 export default {
     inserted(el, binding, vnode) {
         const dragData = binding.value;
-        const namespace = binding.arg || null;
         const listeners = Common.getListeners(vnode);
 
         el.setAttribute('draggable', true);
@@ -15,12 +14,13 @@ export default {
         // Only transfer the key and use an external store for the actual data
         const transferKey = +new Date() + '';
 
+
         el.addEventListener('dragstart', function(event){
             Common.dragInProgressKey = transferKey;
             
             Common.transferredData[transferKey] = {
                 dragData,
-                namespace,
+                namespace: Common.getNamespace(binding, vnode),
                 onDropCallback: null // will be set in droppable directive
             };
 
@@ -35,10 +35,15 @@ export default {
 
 
         el.addEventListener('drag', function(){
+            if (binding.modifiers.dynamic) {
+                Common.transferredData[transferKey].namespace = Common.getNamespace(binding, vnode);
+            }
+
             if (listeners['drag-move']) {
                 listeners['drag-move'](dragData);
             }
-        }, false);
+        });
+        
         
         el.addEventListener('dragend', function(){
             Common.dragInProgressKey = null;

@@ -95,9 +95,20 @@ exports.default = {
             return vnode.componentOptions.listeners;
         }
         return {};
+    },
+    getNamespace: function getNamespace(binding, vnode) {
+        var argument = binding.arg;
+        if (typeof argument !== 'string') {
+            return null;
+        }
+        if (binding.modifiers.dynamic) {
+            var namespace = vnode.context[argument];
+            return typeof namespace !== 'string' ? null : namespace;
+        }
+        return argument;
     }
 };
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 /***/ }),
 /* 1 */
@@ -155,7 +166,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
     inserted: function inserted(el, binding, vnode) {
         var dragData = binding.value;
-        var namespace = binding.arg || null;
         var listeners = _common2.default.getListeners(vnode);
 
         el.setAttribute('draggable', true);
@@ -172,7 +182,7 @@ exports.default = {
 
             _common2.default.transferredData[transferKey] = {
                 dragData: dragData,
-                namespace: namespace,
+                namespace: _common2.default.getNamespace(binding, vnode),
                 onDropCallback: null // will be set in droppable directive
             };
 
@@ -186,10 +196,14 @@ exports.default = {
         }, false);
 
         el.addEventListener('drag', function () {
+            if (binding.modifiers.dynamic) {
+                _common2.default.transferredData[transferKey].namespace = _common2.default.getNamespace(binding, vnode);
+            }
+
             if (listeners['drag-move']) {
                 listeners['drag-move'](dragData);
             }
-        }, false);
+        });
 
         el.addEventListener('dragend', function () {
             _common2.default.dragInProgressKey = null;
@@ -232,38 +246,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
     inserted: function inserted(el, binding, vnode) {
         var listeners = _common2.default.getListeners(vnode);
-        var dropTargetNamespace = binding.arg || null;
 
-        function getDraggedConfig(key) {
-            if (!key) {
-                return null;
-            }
-            return _common2.default.transferredData[key] || null;
+        function isDropAllowed() {
+            var dropTargetNamespace = _common2.default.getNamespace(binding, vnode);
+            var namespace = _common2.default.transferredData[_common2.default.dragInProgressKey].namespace;
+
+            return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
         }
 
-        // Necessary to enable drop event
         el.addEventListener('dragenter', function (event) {
             event.preventDefault();
 
             if (listeners['drag-enter']) {
-                var _getDraggedConfig = getDraggedConfig(_common2.default.dragInProgressKey),
-                    dragData = _getDraggedConfig.dragData;
+                var dragData = _common2.default.transferredData[_common2.default.dragInProgressKey].dragData;
 
-                listeners['drag-enter'](dragData);
+                listeners['drag-enter'](dragData, isDropAllowed());
             }
         }, false);
 
         el.addEventListener('dragover', function (event) {
-            var _getDraggedConfig2 = getDraggedConfig(_common2.default.dragInProgressKey),
-                dragData = _getDraggedConfig2.dragData,
-                namespace = _getDraggedConfig2.namespace;
+            var dragData = _common2.default.transferredData[_common2.default.dragInProgressKey].dragData;
 
-            if (!namespace || !dropTargetNamespace || namespace === dropTargetNamespace) {
+            var dropAllowed = isDropAllowed();
+
+            if (dropAllowed) {
                 event.preventDefault(); // required to allow dropping
             }
 
             if (listeners['drag-over']) {
-                listeners['drag-over'](dragData);
+                listeners['drag-over'](dragData, dropAllowed);
             }
         }, false);
 
@@ -271,10 +282,9 @@ exports.default = {
             event.preventDefault();
 
             if (listeners['drag-leave']) {
-                var _getDraggedConfig3 = getDraggedConfig(_common2.default.dragInProgressKey),
-                    dragData = _getDraggedConfig3.dragData;
+                var dragData = _common2.default.transferredData[_common2.default.dragInProgressKey].dragData;
 
-                listeners['drag-leave'](dragData);
+                listeners['drag-leave'](dragData, isDropAllowed());
             }
         }, false);
 
@@ -282,14 +292,13 @@ exports.default = {
             event.stopPropagation();
             event.preventDefault();
 
-            var key = event.dataTransfer.getData('text');
+            var transferKey = event.dataTransfer.getData('text');
+            var dragData = _common2.default.transferredData[transferKey].dragData;
 
-            var _getDraggedConfig4 = getDraggedConfig(key),
-                dragData = _getDraggedConfig4.dragData;
 
-            _common2.default.transferredData[key].onDropCallback = function () {
+            _common2.default.transferredData[transferKey].onDropCallback = function () {
                 if (listeners['drag-leave']) {
-                    listeners['drag-leave'](dragData);
+                    listeners['drag-leave'](dragData, true);
                 }
                 if (listeners['drag-drop']) {
                     listeners['drag-drop'](dragData);

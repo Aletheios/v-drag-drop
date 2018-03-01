@@ -1,6 +1,6 @@
 {
     "name": "v-drag-drop",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Minimalistic drag & drop directives for Vue.js 2",
     "keywords": ["vue", "vuejs", "vuejs2", "vue2", "directive", "drag-and-drop", "javascript"],
     "author": "Simon Ismair",
@@ -12,6 +12,7 @@
     "main": "dist/vDragDrop.js",
     "scripts": {
         "build": "webpack --env dev && webpack --env build",
+        "demo": "http-server -p 1337",
         "dev": "concurrently \"webpack --progress --colors --watch --env dev\" \"http-server -p 1337\"",
         "lint": "eslint --ext js ./*.js"
     },

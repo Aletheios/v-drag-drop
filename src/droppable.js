@@ -3,55 +3,58 @@ import Common from '@/common';
 export default {
     inserted(el, binding, vnode) {
         const listeners = Common.getListeners(vnode);
-        const dropTargetNamespace = binding.arg || null;
 
-        function getDraggedConfig(key) {
-            if (!key) {
-                return null;
-            }
-            return Common.transferredData[key] || null;
+        function isDropAllowed() {
+            const dropTargetNamespace = Common.getNamespace(binding, vnode);
+            const { namespace } = Common.transferredData[Common.dragInProgressKey];
+            return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
         }
 
-        // Necessary to enable drop event
+
         el.addEventListener('dragenter', function(event){
             event.preventDefault();
 
             if (listeners['drag-enter']) {
-                const { dragData } = getDraggedConfig(Common.dragInProgressKey);
-                listeners['drag-enter'](dragData);
+                const { dragData } = Common.transferredData[Common.dragInProgressKey];
+                listeners['drag-enter'](dragData, isDropAllowed());
             }
         }, false);
 
+
         el.addEventListener('dragover', function(event){
-            const { dragData, namespace } = getDraggedConfig(Common.dragInProgressKey);
-            if (!namespace || !dropTargetNamespace || namespace === dropTargetNamespace) {
+            const { dragData } = Common.transferredData[Common.dragInProgressKey];
+            const dropAllowed = isDropAllowed();
+            
+            if (dropAllowed) {
                 event.preventDefault(); // required to allow dropping
             }
 
             if (listeners['drag-over']) {
-                listeners['drag-over'](dragData);
+                listeners['drag-over'](dragData, dropAllowed);
             }
         }, false);
+
 
         el.addEventListener('dragleave', function(event){
             event.preventDefault();
 
             if (listeners['drag-leave']) {
-                const { dragData } = getDraggedConfig(Common.dragInProgressKey);
-                listeners['drag-leave'](dragData);
+                const { dragData } = Common.transferredData[Common.dragInProgressKey];
+                listeners['drag-leave'](dragData, isDropAllowed());
             }
         }, false);
 
+        
         el.addEventListener('drop', function(event){
             event.stopPropagation();
             event.preventDefault();
             
-            const key = event.dataTransfer.getData('text');
-            const { dragData } = getDraggedConfig(key);
+            const transferKey = event.dataTransfer.getData('text');
+            const { dragData } = Common.transferredData[transferKey];
             
-            Common.transferredData[key].onDropCallback = function(){
+            Common.transferredData[transferKey].onDropCallback = function(){
                 if (listeners['drag-leave']) {
-                    listeners['drag-leave'](dragData);
+                    listeners['drag-leave'](dragData, true);
                 }
                 if (listeners['drag-drop']) {
                     listeners['drag-drop'](dragData);
