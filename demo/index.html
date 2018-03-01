@@ -1,35 +1,48 @@
+<!--
+    Note: This is just the setup for the demo.
+    You can ignore the things in this file as they do not show how to use v-drag-drop. The only interesting part here is "Vue.use(vDragDrop)".
+    Check the script files in this directory for the demo implementations.
+-->
+
 <!DOCTYPE html>
 <html>
     <head>
         <title>v-drag-drop</title>
         <meta charset="utf-8">
 
-        <script src="https://unpkg.com/vue@2.5.13/dist/vue.min.js"></script>
-        <script src="../dist/vDragDrop.js"></script>
-
         <style>
             html, body {
                 font-family: monospace;
                 font-size: 16px;
             }
+            button {
+                font-family: inherit;
+                margin-top: 10px;
+            }
+
             .draggableContainer {
-                width: 30px;
-                height: 30px;
-                margin: 5px;
                 display: inline-block;
-                background: lightgray;
+                margin-right: 10px;
+                padding: 10px 15px;
+                border: 1px solid #999;
+                background: #ccc;
             }
             .draggableContainer.dark {
-                background: gray;
+                border: 1px solid #666;
+                background: #aaa;
             }
+
             .droppableContainer {
-                width: 200px;
-                height: 50px;
-                margin: 5px;
-                border: 1px solid lightgray;
+                width: 400px;
+                height: 100px;
+                margin-top: 20px;
+                padding: 10px;
+                border: 2px dashed #999;
+                background: #f9f9f9;
             }
             .droppableContainer.dark {
-                border: 1px solid gray;
+                border: 2px dashed #666;
+                background: #ccc;
             }
         </style>
     </head>
@@ -37,152 +50,55 @@
     <body>
         <div id="app">
             <h2>v-drag-drop</h2>
-            Open the console to see log messages.
 
-            <h4>Lists Items</h4>
-            <list-items-demo></list-items-demo>
-
-            <h4>Containers</h4>
-            <containers-demo></containers-demo>
-
-            <h4>Namespaces</h4>
-            <namespaces-demo></namespaces-demo>
-
-            <h4>Dynamic Namespaces</h4>
-            <dynamic-namespaces-demo></dynamic-namespaces-demo>
+            <router-link to="/demo1" tag="button">Demo 1: Basic usage</router-link>
+            <router-link to="/demo2" tag="button">Demo 2: Events</router-link>
+            <router-link to="/demo3" tag="button">Demo 3: Real-world usage</router-link>
+            <router-link to="/demo4" tag="button">Demo 4: Namespaces</router-link>
+            <router-link to="/demo5" tag="button">Demo 5: Dynamic namespaces</router-link>
+            
+            <br><br>
+            <router-view></router-view>
         </div>
 
+        <script src="https://unpkg.com/vue@2.5.13/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.min.js"></script>
+        <script src="../dist/vDragDrop.js"></script>
 
-        <!-- List items demo -->
-        <script type="text/x-template" id="listItemsDemoTemplate">
-            <ul>
-                <li v-for="item in items" :key="item"
-                    v-draggable.move="item" @drag-start="onDragStart" @drag-move="onDragMove" @drag-end="onDragEnd"
-                    v-droppable.move @drag-drop="dropItem => onDropped(dropItem, item)"
-                    @drag-enter="onDragEnter" @drag-leave="onDragLeave">
-                    {{ item }}
-                </li>
-            </ul>
-        </script>
-        <script>
-            Vue.component('list-items-demo', {
-                template: '#listItemsDemoTemplate',
-                data: () => ({ items: ['foo', 'bar', 'baz'] }),
-                methods: {
-                    onDragStart(item) {
-                        console.log('drag start', item);
-                    },
-                    onDragMove(item) {
-                        console.log('dragging', item);
-                    },
-                    onDragEnd(item) {
-                        console.log('drag end', item);
-                    },
-                    onDropped(item, currentItem) {
-                        console.log('dropped', item, 'onto', currentItem);
-                    },
-                    onDragEnter(item, isDropPossible) {
-                        console.log('drag enter', item, 'drop possible?', isDropPossible);
-                    },
-                    onDragLeave(item, isDropPossible) {
-                        console.log('drag leave', item, 'drop possible?', isDropPossible);
-                    }
-                }
-            });
-        </script>
+        <script src="demo1-basic-usage.js"></script>
+        <script src="demo2-events.js"></script>
+        <script src="demo3-real-world-usage.js"></script>
+        <script src="demo4-namespaces.js"></script>
+        <script src="demo5-dynamic-namespaces.js"></script>
 
-
-        <!-- Containers demo -->
-        <script type="text/x-template" id="containersDemoTemplate">
-            <div>
-                <div v-for="i in [1,2,3]" :key="i"
-                     v-if="!itemsInContainer.includes(i)"
-                     v-draggable.move="getObjectToDrag(i)"
-                     class="draggableContainer">
-                    {{ i }}
-                </div>
-                <div v-droppable @drag-drop="onContainerDropped" class="droppableContainer">
-                    <div v-for="i in itemsInContainer" :key="i" class="draggableContainer">{{ i }}</div>
-                </div>
-            </div>
-        </script>
-        <script>
-            Vue.component('containers-demo', {
-                template: '#containersDemoTemplate',
-                data: () => ({ itemsInContainer: [] }),
-                methods: {
-                    getObjectToDrag(i) {
-                        return { foobar: i };
-                    },
-                    onContainerDropped(dropItem) {
-                        this.itemsInContainer.push(dropItem.foobar);
-                        console.log('dropped container', dropItem);
-                    }
-                }
-            });
-        </script>
-
-
-        <!-- Namespaces demo -->
-        <script type="text/x-template" id="namespacesDemoTemplate">
-            <div>
-                <div v-for="i in [1,2,3]" :key="i" v-draggable:namespace1.move="i" class="draggableContainer">{{ i }}</div>
-                <div v-for="i in [4,5,6]" :key="i" v-draggable:namespace2.move="i" class="draggableContainer dark">{{ i }}</div>
-                <div v-droppable:namespace1 @drag-drop="item => onContainerDropped('namespace1', item)" class="droppableContainer"></div>
-                <div v-droppable:namespace2 @drag-drop="item => onContainerDropped('namespace2', item)" class="droppableContainer dark"></div>
-            </div>
-        </script>
-        <script>
-            Vue.component('namespaces-demo', {
-                template: '#namespacesDemoTemplate',
-                methods: {
-                    onContainerDropped(namespace, item) {
-                        console.log('dropped', item, 'in namespace', namespace);
-                    }
-                }
-            });
-        </script>
-
-
-        <!-- Dynamic namespaces demo -->
-        <script type="text/x-template" id="dynamicNamespacesDemoTemplate">
-            <div>
-                <div v-for="i in [1,2,3]" :key="i" v-draggable:namespace1.move="i" class="draggableContainer">{{ i }}</div>
-                <div v-for="i in [4,5,6]" :key="i" v-draggable:namespace2.move="i" class="draggableContainer dark">{{ i }}</div>
-                <div v-droppable:namespace1.dynamic @drag-drop="item => onContainerDropped('namespace1', item)" :class="{ droppableContainer: true, dark: namespace1 === 'namespace2' }"></div>
-                <div v-droppable:namespace2.dynamic @drag-drop="item => onContainerDropped('namespace2', item)" :class="{ droppableContainer: true, dark: namespace2 === 'namespace2' }"></div>
-            </div>
-        </script>
-        <script>
-            Vue.component('dynamic-namespaces-demo', {
-                template: '#dynamicNamespacesDemoTemplate',
-                methods: {
-                    onContainerDropped(namespace, item) {
-                        console.log('dropped', item, 'in namespace', namespace);
-                    }
-                },
-                data() {
-                    return {
-                        namespace1: 'namespace1',
-                        namespace2: 'namespace2'
-                    };
-                },
-                mounted() {
-                    setInterval(() => {
-                        const tmp = this.namespace1;
-                        this.namespace1 = this.namespace2;
-                        this.namespace2 = tmp;
-                    }, 1000);
-                }
-            });
-        </script>
-
-
-        <!-- Initialization -->
         <script>
             Vue.use(vDragDrop);
-            
-            new Vue({ el: '#app' });
+            Vue.use(VueRouter);
+
+            new Vue({
+                el: '#app',
+                router: new VueRouter({
+                    routes: [{
+                        path: '/demo1',
+                        component: window.Demo1
+                    }, {
+                        path: '/demo2',
+                        component: window.Demo2
+                    }, {
+                        path: '/demo3',
+                        component: window.Demo3
+                    }, {
+                        path: '/demo4',
+                        component: window.Demo4
+                    }, {
+                        path: '/demo5',
+                        component: window.Demo5
+                    }, {
+                        path: '*',
+                        redirect: '/demo1'
+                    }]
+                })
+            });
         </script>
     </body>
 </html>
