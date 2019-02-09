@@ -2,21 +2,21 @@
 
 const LIB_NAME = 'vDragDrop';
 
-const webpack = require('webpack');
 const path = require('path');
 const env = require('yargs').argv.env;
+const TerserPlugin = require('terser-webpack-plugin');
 
-const plugins = [];
-let outputFile;
+const outputFile = LIB_NAME + (env === 'build' ? '.min.js' : '.js');
+
+const optimization = { };
 if (env === 'build') {
-    plugins.push(new webpack.optimize.UglifyJsPlugin({ minimize: true }));
-    outputFile = LIB_NAME + '.min.js';
-}
-else {
-    outputFile = LIB_NAME + '.js';
+    optimization.optimization = {
+        minimizer: [new TerserPlugin()]
+    };
 }
 
 const config = {
+    mode: env === 'build' ? 'production' : 'development',
     entry: [path.resolve(__dirname, 'src/index.js')],
     devtool: 'source-map',
     output: {
@@ -25,6 +25,11 @@ const config = {
         library: LIB_NAME,
         libraryTarget: 'umd',
         umdNamedDefine: true
+    },
+    stats: {
+        warnings: false,
+        modules: false,
+        hash: false
     },
     module: {
         rules: [
@@ -47,7 +52,7 @@ const config = {
             '@': path.join(__dirname, 'src')
         }
     },
-    plugins
+    ...optimization
 };
 
 module.exports = config;

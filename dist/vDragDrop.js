@@ -7,7 +7,7 @@
 		exports["vDragDrop"] = factory();
 	else
 		root["vDragDrop"] = factory();
-})(typeof self !== 'undefined' ? self : this, function() {
+})(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -46,12 +46,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -69,12 +89,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./src/common.js":
+/*!***********************!*\
+  !*** ./src/common.js ***!
+  \***********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108,46 +134,15 @@ exports.default = {
         return argument;
     }
 };
-module.exports = exports['default'];
+module.exports = exports.default;
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(2);
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _draggable = __webpack_require__(3);
-
-var _draggable2 = _interopRequireDefault(_draggable);
-
-var _droppable = __webpack_require__(4);
-
-var _droppable2 = _interopRequireDefault(_droppable);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    install: function install(Vue) {
-        Vue.directive('draggable', _draggable2.default);
-        Vue.directive('droppable', _droppable2.default);
-    }
-};
-module.exports = exports['default'];
-
-/***/ }),
-/* 3 */
+/***/ "./src/draggable.js":
+/*!**************************!*\
+  !*** ./src/draggable.js ***!
+  \**************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -157,7 +152,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _common = __webpack_require__(0);
+var _common = __webpack_require__(/*! @/common */ "./src/common.js");
 
 var _common2 = _interopRequireDefault(_common);
 
@@ -224,10 +219,15 @@ exports.default = {
         });
     }
 };
-module.exports = exports['default'];
+module.exports = exports.default;
 
 /***/ }),
-/* 4 */
+
+/***/ "./src/droppable.js":
+/*!**************************!*\
+  !*** ./src/droppable.js ***!
+  \**************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -237,7 +237,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _common = __webpack_require__(0);
+var _common = __webpack_require__(/*! @/common */ "./src/common.js");
 
 var _common2 = _interopRequireDefault(_common);
 
@@ -307,9 +307,56 @@ exports.default = {
         }, false);
     }
 };
-module.exports = exports['default'];
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _draggable = __webpack_require__(/*! @/draggable */ "./src/draggable.js");
+
+var _draggable2 = _interopRequireDefault(_draggable);
+
+var _droppable = __webpack_require__(/*! @/droppable */ "./src/droppable.js");
+
+var _droppable2 = _interopRequireDefault(_droppable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    install: function install(Vue) {
+        Vue.directive('draggable', _draggable2.default);
+        Vue.directive('droppable', _droppable2.default);
+    }
+};
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ 0:
+/*!****************************!*\
+  !*** multi ./src/index.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! D:\Simon\Code\_opensource\v-drag-drop\src\index.js */"./src/index.js");
+
 
 /***/ })
-/******/ ]);
+
+/******/ });
 });
 //# sourceMappingURL=vDragDrop.js.map
