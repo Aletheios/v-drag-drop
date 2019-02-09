@@ -107,7 +107,7 @@ Example:
 
 * `move`: Optional. Add this modifier to get a crosshair cursor on the element: `v-draggable.move`
 
-* `dynamic`: Optional. Enables dynamic namespace names. When `dynamic` is set, the given namespace attribute is treated as a property name; the property must be of type `String` and must be present in the parent component (can be a computed property).
+* `dynamic`: Optional. Enables dynamic namespace names. When `dynamic` is set, the given namespace attribute is treated as a property ("variable") name; the property must be of type `String` and must be present in the parent component (can be a computed property).
 
     Example:
     ```javascript
@@ -121,6 +121,8 @@ Example:
         }
     });
     ```
+
+    **Note:** The `dynamic` modifier is required to enable truly dynamic arguments whose values can change later in time. By contrast, [the new "dynamic" arguments in Vue 2.6+](https://vuejs.org/v2/guide/syntax.html#Dynamic-Arguments) are evaluated only once at the beginning and then statically passed to the directive. You can use those with `v-drag-drop` if you want, but they won't have the same effect as you'd get with `dynamic`.
 
 #### Events
 
