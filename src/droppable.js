@@ -57,7 +57,7 @@ export default {
                     listeners['drag-leave'](dragData, true);
                 }
                 if (listeners['drag-drop']) {
-                    listeners['drag-drop'](dragData);
+                    listeners['drag-drop'](dragData, event);
                 }
             };
         }, false);
