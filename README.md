@@ -159,4 +159,4 @@ All event listeners (except `drag-drop`) are called with two parameters: (1) the
 
 * `drag-leave`: Fired when a dragged item leaves the drop zone.
 
-* `drag-drop`: Fired when an item has been dropped on the drop zone. Called with the dragged data and the drop event data, in order to retrieve the precise mouse coordinates of the drop if needed.
+* `drag-drop`: Fired when an item has been dropped on the drop zone. Called with the dragged data and the original drop event. This enables you for example to retrieve the precise mouse coordinates of the drop.

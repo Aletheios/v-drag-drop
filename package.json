@@ -1,6 +1,6 @@
 {
     "name": "v-drag-drop",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "description": "Minimalistic drag & drop directives for Vue.js 2",
     "keywords": [
         "vue",
