@@ -57,6 +57,7 @@
             <router-link to="/demo4" tag="button">Demo 4: Namespaces</router-link>
             <router-link to="/demo5" tag="button">Demo 5: Dynamic namespaces</router-link>
             <router-link to="/demo6" tag="button">Demo 6: Local registration</router-link>
+            <router-link to="/demo7" tag="button">Demo 7: Drag image</router-link>
             
             <br><br>
             <router-view></router-view>
@@ -72,6 +73,7 @@
         <script src="demo4-namespaces.js"></script>
         <script src="demo5-dynamic-namespaces.js"></script>
         <script src="demo6-local-registration.js"></script>
+        <script src="demo7-drag-image.js"></script>
 
         <script>
             Vue.use(vDragDrop);
@@ -98,6 +100,9 @@
                     }, {
                         path: '/demo6',
                         component: window.Demo6
+                    }, {
+                        path: '/demo7',
+                        component: window.Demo7
                     }, {
                         path: '*',
                         redirect: '/demo1'

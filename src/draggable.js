@@ -2,7 +2,7 @@ import Common from '@/common';
 
 export default {
     inserted(el, binding, vnode) {
-        const dragData = binding.value;
+        const dragData = binding.modifiers.image ? binding.value.data : binding.value;
         const listeners = Common.getListeners(vnode);
 
         el.setAttribute('draggable', true);
@@ -24,9 +24,13 @@ export default {
                 onDropCallback: null // will be set in droppable directive
             };
 
-            event.dataTransfer.setData('text', transferKey);
+            event.dataTransfer.setData('text/plain', transferKey);
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
+            
+            if (binding.modifiers.image) {
+                event.dataTransfer.setDragImage(binding.value.image, 10, 10);
+            }
 
             if (listeners['drag-start']) {
                 listeners['drag-start'](dragData, event);

@@ -127,6 +127,14 @@ Namespaces can also be assigned dynamically using [dynamic arguments](https://vu
 
 * `move`: Optional. Add this modifier to get a crosshair cursor on the element: `v-draggable.move`
 
+* `image`: Optional. Use a [drag image](https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/setDragImage) that is shown while dragging is in progress. If this modifier is set, the data to be transferred must be an object containing `data` and `image`.
+
+    Example:
+
+    ```html
+    <div v-draggable.image="{ data: myData, image: myImage }"></div>
+    ```
+
 * `dynamic`: Optional. Enables dynamic namespace names. When `dynamic` is set, the given namespace attribute is treated as a property ("variable") name; the property must be of type String and must be present in the parent component (can be a computed property).
 
     Example:
