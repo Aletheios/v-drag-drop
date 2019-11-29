@@ -129,13 +129,15 @@ Namespaces can also be assigned dynamically using [dynamic arguments](https://vu
 
 #### Events
 
-All event listeners are called with the dragged data as first argument.
-
 * `drag-start`: Fired when the user starts dragging.
 
 * `drag-move`: Fired repeatedly while dragging is in progress.
 
 * `drag-end`: Fired when dragging is finished.
+
+All event listeners are called with two arguments:
+1. The dragged data
+2. The native JavaScript event
 
 
 ### `v-droppable`
@@ -146,8 +148,6 @@ The namespace of the drop zone, see `v-draggable`. If no namespace is given, all
 
 #### Events
 
-All event listeners (except `drag-drop`) are called with two parameters: (1) the dragged data, (2) whether or not dropping will be possible (i.e. the namespaces of the dragged item and the drop zone match)
-
 * `drag-enter`: Fired when a dragged item enters the drop zone.
 
 * `drag-over`: Fired repeatedly while a dragged item is over the drop zone.
@@ -155,3 +155,8 @@ All event listeners (except `drag-drop`) are called with two parameters: (1) the
 * `drag-leave`: Fired when a dragged item leaves the drop zone.
 
 * `drag-drop`: Fired when an item has been dropped on the drop zone. Called with the dragged data and the original drop event. This enables you for example to retrieve the precise mouse coordinates of the drop.
+
+All event listeners are called with three parameters:
+1. The dragged data
+2. Whether or not dropping will be possible (i.e. the namespaces of the dragged item and the drop zone match)
+3. The native JavaScript event

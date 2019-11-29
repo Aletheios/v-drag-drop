@@ -29,23 +29,23 @@ export default {
             event.dataTransfer.dropEffect = 'move';
 
             if (listeners['drag-start']) {
-                listeners['drag-start'](dragData);
+                listeners['drag-start'](dragData, event);
             }
         }, false);
 
 
-        el.addEventListener('drag', function(){
+        el.addEventListener('drag', function(event){
             if (binding.modifiers.dynamic) {
                 Common.transferredData[transferKey].namespace = Common.getNamespace(binding);
             }
 
             if (listeners['drag-move']) {
-                listeners['drag-move'](dragData);
+                listeners['drag-move'](dragData, event);
             }
         });
         
         
-        el.addEventListener('dragend', function(){
+        el.addEventListener('dragend', function(event){
             Common.dragInProgressKey = null;
 
             if (Common.transferredData[transferKey]) {
@@ -57,7 +57,7 @@ export default {
             }
 
             if (listeners['drag-end']) {
-                listeners['drag-end'](dragData);
+                listeners['drag-end'](dragData, event);
             }
         });
     }

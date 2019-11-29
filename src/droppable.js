@@ -16,7 +16,7 @@ export default {
 
             if (listeners['drag-enter']) {
                 const { dragData } = Common.transferredData[Common.dragInProgressKey];
-                listeners['drag-enter'](dragData, isDropAllowed());
+                listeners['drag-enter'](dragData, isDropAllowed(), event);
             }
         }, false);
 
@@ -30,7 +30,7 @@ export default {
             }
 
             if (listeners['drag-over']) {
-                listeners['drag-over'](dragData, dropAllowed);
+                listeners['drag-over'](dragData, dropAllowed, event);
             }
         }, false);
 
@@ -40,7 +40,7 @@ export default {
 
             if (listeners['drag-leave']) {
                 const { dragData } = Common.transferredData[Common.dragInProgressKey];
-                listeners['drag-leave'](dragData, isDropAllowed());
+                listeners['drag-leave'](dragData, isDropAllowed(), event);
             }
         }, false);
 
@@ -54,10 +54,10 @@ export default {
             
             Common.transferredData[transferKey].onDropCallback = function(){
                 if (listeners['drag-leave']) {
-                    listeners['drag-leave'](dragData, true);
+                    listeners['drag-leave'](dragData, true, event);
                 }
                 if (listeners['drag-drop']) {
-                    listeners['drag-drop'](dragData, event);
+                    listeners['drag-drop'](dragData, true, event);
                 }
             };
         }, false);

@@ -199,19 +199,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         event.dataTransfer.dropEffect = 'move';
 
         if (listeners['drag-start']) {
-          listeners['drag-start'](dragData);
+          listeners['drag-start'](dragData, event);
         }
       }, false);
-      el.addEventListener('drag', function () {
+      el.addEventListener('drag', function (event) {
         if (binding.modifiers.dynamic) {
           _common.default.transferredData[transferKey].namespace = _common.default.getNamespace(binding);
         }
 
         if (listeners['drag-move']) {
-          listeners['drag-move'](dragData);
+          listeners['drag-move'](dragData, event);
         }
       });
-      el.addEventListener('dragend', function () {
+      el.addEventListener('dragend', function (event) {
         _common.default.dragInProgressKey = null;
 
         if (_common.default.transferredData[transferKey]) {
@@ -226,7 +226,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         if (listeners['drag-end']) {
-          listeners['drag-end'](dragData);
+          listeners['drag-end'](dragData, event);
         }
       });
     }
@@ -278,7 +278,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (listeners['drag-enter']) {
           var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
-          listeners['drag-enter'](dragData, isDropAllowed());
+          listeners['drag-enter'](dragData, isDropAllowed(), event);
         }
       }, false);
       el.addEventListener('dragover', function (event) {
@@ -290,7 +290,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         if (listeners['drag-over']) {
-          listeners['drag-over'](dragData, dropAllowed);
+          listeners['drag-over'](dragData, dropAllowed, event);
         }
       }, false);
       el.addEventListener('dragleave', function (event) {
@@ -298,7 +298,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (listeners['drag-leave']) {
           var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
-          listeners['drag-leave'](dragData, isDropAllowed());
+          listeners['drag-leave'](dragData, isDropAllowed(), event);
         }
       }, false);
       el.addEventListener('drop', function (event) {
@@ -309,11 +309,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         _common.default.transferredData[transferKey].onDropCallback = function () {
           if (listeners['drag-leave']) {
-            listeners['drag-leave'](dragData, true);
+            listeners['drag-leave'](dragData, true, event);
           }
 
           if (listeners['drag-drop']) {
-            listeners['drag-drop'](dragData, event);
+            listeners['drag-drop'](dragData, true, event);
           }
         };
       }, false);
