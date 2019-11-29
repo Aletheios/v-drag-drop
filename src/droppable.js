@@ -5,7 +5,7 @@ export default {
         const listeners = Common.getListeners(vnode);
 
         function isDropAllowed() {
-            const dropTargetNamespace = Common.getNamespace(binding);
+            const dropTargetNamespace = Common.getNamespace(binding, vnode);
             const { namespace } = Common.transferredData[Common.dragInProgressKey];
             return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
         }

@@ -131,11 +131,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       return {};
     },
-    getNamespace: function getNamespace(binding) {
+    getNamespace: function getNamespace(binding, vnode) {
       var argument = binding.arg;
 
       if (typeof argument !== 'string') {
         return null;
+      }
+
+      if (binding.modifiers.dynamic) {
+        var namespace = vnode.context[argument];
+        return typeof namespace !== 'string' ? null : namespace;
       }
 
       return argument;
@@ -190,7 +195,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _common.default.dragInProgressKey = transferKey;
         _common.default.transferredData[transferKey] = {
           dragData: dragData,
-          namespace: _common.default.getNamespace(binding),
+          namespace: _common.default.getNamespace(binding, vnode),
           onDropCallback: null // will be set in droppable directive
 
         };
@@ -204,7 +209,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }, false);
       el.addEventListener('drag', function (event) {
         if (binding.modifiers.dynamic) {
-          _common.default.transferredData[transferKey].namespace = _common.default.getNamespace(binding);
+          _common.default.transferredData[transferKey].namespace = _common.default.getNamespace(binding, vnode);
         }
 
         if (listeners['drag-move']) {
@@ -267,7 +272,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       var listeners = _common.default.getListeners(vnode);
 
       function isDropAllowed() {
-        var dropTargetNamespace = _common.default.getNamespace(binding);
+        var dropTargetNamespace = _common.default.getNamespace(binding, vnode);
 
         var namespace = _common.default.transferredData[_common.default.dragInProgressKey].namespace;
         return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;

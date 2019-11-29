@@ -61,13 +61,13 @@ The following template example is the minimum setup required to get a draggable 
 This template example shows all the features supported by `v-drag-drop`. Check the [API section](#api) for details.
 
 ```html
-<div v-draggable:namespace.move="myData"
+<div v-draggable:namespace.dynamic.move="myData"
      @drag-start="onDragStart"
      @drag-move="onDragMove"
      @drag-end="onDragEnd">
 </div>
 
-<div v-droppable:namespace
+<div v-droppable:namespace.dynamic
      @drag-enter="onDragEnter"
      @drag-over="onDragOver"
      @drag-leave="onDragLeave"
@@ -105,7 +105,7 @@ Vue.component('my-component', {
 
 You can pass an argument to `v-draggable`. This argument is a namespace that defines in which drop zones the draggable item can be dropped (requires the drop zone to have the same namespace). Namespaces allow you to place multiple drop zones on the same page that accept different items.
 
-If no namespace is defined (default), the items can be dropped on any drop zone.
+If no namespace is defined (default), the items can be dropped on any drop zone. Namespaces can be assigned dynamically, see the `dynamic` modifier.
 
 Example:
 
@@ -127,6 +127,24 @@ Namespaces can also be assigned dynamically using [dynamic arguments](https://vu
 
 * `move`: Optional. Add this modifier to get a crosshair cursor on the element: `v-draggable.move`
 
+* `dynamic`: Optional. Enables dynamic namespace names. When `dynamic` is set, the given namespace attribute is treated as a property ("variable") name; the property must be of type String and must be present in the parent component (can be a computed property).
+
+    Example:
+
+    ```javascript
+    Vue.component('my-component', {
+        template: '<div v-draggable:myNamespace.dynamic="myData"></div>',
+        data() {
+            return {
+                myData: { foobar: 42 },
+                myNamespace: 'actualNamespaceName' // can be changed later
+            };
+        }
+    });
+    ```
+
+    **Note:** The dynamic modifier is required to enable truly dynamic arguments whose values can change later in time. By contrast, ["dynamic" arguments in Vue 2.6+](https://vuejs.org/v2/guide/syntax.html#Dynamic-Arguments) are evaluated only once at the beginning and then statically passed to the directive. You can use those with `v-drag-drop` if you want, but they won't have the same effect as you'd get with the `dynamic` modifier.
+
 #### Events
 
 * `drag-start`: Fired when the user starts dragging.
@@ -142,9 +160,17 @@ All event listeners are called with two arguments:
 
 ### `v-droppable`
 
+#### Value
+
+Unused.
+
 #### Argument
 
 The namespace of the drop zone, see `v-draggable`. If no namespace is given, all items can be dropped on this drop zone.
+
+#### Modifiers
+
+* `dynamic`: Optional. Enables dynamic namespace names. See `v-draggable`.
 
 #### Events
 

@@ -12,10 +12,14 @@ export default {
         return { };
     },
 
-    getNamespace(binding) {
+    getNamespace(binding, vnode) {
         const argument = binding.arg;
         if (typeof argument !== 'string') {
             return null;
+        }
+        if (binding.modifiers.dynamic) {
+            const namespace = vnode.context[argument];
+            return typeof namespace !== 'string' ? null : namespace;
         }
         return argument;
     }
