@@ -20,7 +20,7 @@ export default {
             
             Common.transferredData[transferKey] = {
                 dragData,
-                namespace: Common.getNamespace(binding, vnode),
+                namespace: Common.getNamespace(binding),
                 onDropCallback: null // will be set in droppable directive
             };
 
@@ -36,7 +36,7 @@ export default {
 
         el.addEventListener('drag', function(){
             if (binding.modifiers.dynamic) {
-                Common.transferredData[transferKey].namespace = Common.getNamespace(binding, vnode);
+                Common.transferredData[transferKey].namespace = Common.getNamespace(binding);
             }
 
             if (listeners['drag-move']) {

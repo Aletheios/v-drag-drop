@@ -103,38 +103,47 @@ return /******/ (function(modules) { // webpackBootstrap
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else { var mod; }
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
+  "use strict";
 
-
-Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
-});
-exports.default = {
+  });
+  _exports.default = void 0;
+  var _default = {
     transferredData: {},
     dragInProgressKey: null,
-
     getListeners: function getListeners(vnode) {
-        if (vnode.data && vnode.data.on) {
-            return vnode.data.on;
-        }
-        if (vnode.componentOptions && vnode.componentOptions.listeners) {
-            return vnode.componentOptions.listeners;
-        }
-        return {};
+      if (vnode.data && vnode.data.on) {
+        return vnode.data.on;
+      }
+
+      if (vnode.componentOptions && vnode.componentOptions.listeners) {
+        return vnode.componentOptions.listeners;
+      }
+
+      return {};
     },
-    getNamespace: function getNamespace(binding, vnode) {
-        var argument = binding.arg;
-        if (typeof argument !== 'string') {
-            return null;
-        }
-        if (binding.modifiers.dynamic) {
-            var namespace = vnode.context[argument];
-            return typeof namespace !== 'string' ? null : namespace;
-        }
-        return argument;
+    getNamespace: function getNamespace(binding) {
+      var argument = binding.arg;
+
+      if (typeof argument !== 'string') {
+        return null;
+      }
+
+      return argument;
     }
-};
-module.exports = exports.default;
+  };
+  _exports.default = _default;
+  module.exports = exports.default;
+});
 
 /***/ }),
 
@@ -145,81 +154,86 @@ module.exports = exports.default;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @/common */ "./src/common.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else { var mod; }
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _common) {
+  "use strict";
 
-
-Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
-});
+  });
+  _exports.default = void 0;
+  _common = _interopRequireDefault(_common);
 
-var _common = __webpack_require__(/*! @/common */ "./src/common.js");
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _common2 = _interopRequireDefault(_common);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
+  var _default = {
     inserted: function inserted(el, binding, vnode) {
-        var dragData = binding.value;
-        var listeners = _common2.default.getListeners(vnode);
+      var dragData = binding.value;
 
-        el.setAttribute('draggable', true);
+      var listeners = _common.default.getListeners(vnode);
 
-        if (binding.modifiers && binding.modifiers.move) {
-            el.style.cursor = 'move';
+      el.setAttribute('draggable', true);
+
+      if (binding.modifiers && binding.modifiers.move) {
+        el.style.cursor = 'move';
+      } // Only transfer the key and use an external store for the actual data
+
+
+      var transferKey = +new Date() + '';
+      el.addEventListener('dragstart', function (event) {
+        _common.default.dragInProgressKey = transferKey;
+        _common.default.transferredData[transferKey] = {
+          dragData: dragData,
+          namespace: _common.default.getNamespace(binding),
+          onDropCallback: null // will be set in droppable directive
+
+        };
+        event.dataTransfer.setData('text', transferKey);
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.dropEffect = 'move';
+
+        if (listeners['drag-start']) {
+          listeners['drag-start'](dragData);
+        }
+      }, false);
+      el.addEventListener('drag', function () {
+        if (binding.modifiers.dynamic) {
+          _common.default.transferredData[transferKey].namespace = _common.default.getNamespace(binding);
         }
 
-        // Only transfer the key and use an external store for the actual data
-        var transferKey = +new Date() + '';
+        if (listeners['drag-move']) {
+          listeners['drag-move'](dragData);
+        }
+      });
+      el.addEventListener('dragend', function () {
+        _common.default.dragInProgressKey = null;
 
-        el.addEventListener('dragstart', function (event) {
-            _common2.default.dragInProgressKey = transferKey;
+        if (_common.default.transferredData[transferKey]) {
+          if (typeof _common.default.transferredData[transferKey].onDropCallback === 'function') {
+            var callback = _common.default.transferredData[transferKey].onDropCallback;
+            setTimeout(function () {
+              return callback();
+            }, 0);
+          }
 
-            _common2.default.transferredData[transferKey] = {
-                dragData: dragData,
-                namespace: _common2.default.getNamespace(binding, vnode),
-                onDropCallback: null // will be set in droppable directive
-            };
+          delete _common.default.transferredData[transferKey];
+        }
 
-            event.dataTransfer.setData('text', transferKey);
-            event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.dropEffect = 'move';
-
-            if (listeners['drag-start']) {
-                listeners['drag-start'](dragData);
-            }
-        }, false);
-
-        el.addEventListener('drag', function () {
-            if (binding.modifiers.dynamic) {
-                _common2.default.transferredData[transferKey].namespace = _common2.default.getNamespace(binding, vnode);
-            }
-
-            if (listeners['drag-move']) {
-                listeners['drag-move'](dragData);
-            }
-        });
-
-        el.addEventListener('dragend', function () {
-            _common2.default.dragInProgressKey = null;
-
-            if (_common2.default.transferredData[transferKey]) {
-                if (typeof _common2.default.transferredData[transferKey].onDropCallback === 'function') {
-                    var callback = _common2.default.transferredData[transferKey].onDropCallback;
-                    setTimeout(function () {
-                        return callback();
-                    }, 0);
-                }
-                delete _common2.default.transferredData[transferKey];
-            }
-
-            if (listeners['drag-end']) {
-                listeners['drag-end'](dragData);
-            }
-        });
+        if (listeners['drag-end']) {
+          listeners['drag-end'](dragData);
+        }
+      });
     }
-};
-module.exports = exports.default;
+  };
+  _exports.default = _default;
+  module.exports = exports.default;
+});
 
 /***/ }),
 
@@ -230,84 +244,84 @@ module.exports = exports.default;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @/common */ "./src/common.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else { var mod; }
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _common) {
+  "use strict";
 
-
-Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
-});
+  });
+  _exports.default = void 0;
+  _common = _interopRequireDefault(_common);
 
-var _common = __webpack_require__(/*! @/common */ "./src/common.js");
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _common2 = _interopRequireDefault(_common);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
+  var _default = {
     inserted: function inserted(el, binding, vnode) {
-        var listeners = _common2.default.getListeners(vnode);
+      var listeners = _common.default.getListeners(vnode);
 
-        function isDropAllowed() {
-            var dropTargetNamespace = _common2.default.getNamespace(binding, vnode);
-            var namespace = _common2.default.transferredData[_common2.default.dragInProgressKey].namespace;
+      function isDropAllowed() {
+        var dropTargetNamespace = _common.default.getNamespace(binding);
 
-            return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
+        var namespace = _common.default.transferredData[_common.default.dragInProgressKey].namespace;
+        return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
+      }
+
+      el.addEventListener('dragenter', function (event) {
+        event.preventDefault();
+
+        if (listeners['drag-enter']) {
+          var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
+          listeners['drag-enter'](dragData, isDropAllowed());
+        }
+      }, false);
+      el.addEventListener('dragover', function (event) {
+        var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
+        var dropAllowed = isDropAllowed();
+
+        if (dropAllowed) {
+          event.preventDefault(); // required to allow dropping
         }
 
-        el.addEventListener('dragenter', function (event) {
-            event.preventDefault();
+        if (listeners['drag-over']) {
+          listeners['drag-over'](dragData, dropAllowed);
+        }
+      }, false);
+      el.addEventListener('dragleave', function (event) {
+        event.preventDefault();
 
-            if (listeners['drag-enter']) {
-                var dragData = _common2.default.transferredData[_common2.default.dragInProgressKey].dragData;
+        if (listeners['drag-leave']) {
+          var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
+          listeners['drag-leave'](dragData, isDropAllowed());
+        }
+      }, false);
+      el.addEventListener('drop', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var transferKey = event.dataTransfer.getData('text');
+        var dragData = _common.default.transferredData[transferKey].dragData;
 
-                listeners['drag-enter'](dragData, isDropAllowed());
-            }
-        }, false);
+        _common.default.transferredData[transferKey].onDropCallback = function () {
+          if (listeners['drag-leave']) {
+            listeners['drag-leave'](dragData, true);
+          }
 
-        el.addEventListener('dragover', function (event) {
-            var dragData = _common2.default.transferredData[_common2.default.dragInProgressKey].dragData;
-
-            var dropAllowed = isDropAllowed();
-
-            if (dropAllowed) {
-                event.preventDefault(); // required to allow dropping
-            }
-
-            if (listeners['drag-over']) {
-                listeners['drag-over'](dragData, dropAllowed);
-            }
-        }, false);
-
-        el.addEventListener('dragleave', function (event) {
-            event.preventDefault();
-
-            if (listeners['drag-leave']) {
-                var dragData = _common2.default.transferredData[_common2.default.dragInProgressKey].dragData;
-
-                listeners['drag-leave'](dragData, isDropAllowed());
-            }
-        }, false);
-
-        el.addEventListener('drop', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            var transferKey = event.dataTransfer.getData('text');
-            var dragData = _common2.default.transferredData[transferKey].dragData;
-
-
-            _common2.default.transferredData[transferKey].onDropCallback = function () {
-                if (listeners['drag-leave']) {
-                    listeners['drag-leave'](dragData, true);
-                }
-                if (listeners['drag-drop']) {
-                    listeners['drag-drop'](dragData, event);
-                }
-            };
-        }, false);
+          if (listeners['drag-drop']) {
+            listeners['drag-drop'](dragData, event);
+          }
+        };
+      }, false);
     }
-};
-module.exports = exports.default;
+  };
+  _exports.default = _default;
+  module.exports = exports.default;
+});
 
 /***/ }),
 
@@ -318,30 +332,36 @@ module.exports = exports.default;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @/draggable */ "./src/draggable.js"), __webpack_require__(/*! @/droppable */ "./src/droppable.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else { var mod; }
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _draggable, _droppable) {
+  "use strict";
 
-
-Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
-});
+  });
+  _exports.default = void 0;
+  _draggable = _interopRequireDefault(_draggable);
+  _droppable = _interopRequireDefault(_droppable);
 
-var _draggable = __webpack_require__(/*! @/draggable */ "./src/draggable.js");
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _draggable2 = _interopRequireDefault(_draggable);
-
-var _droppable = __webpack_require__(/*! @/droppable */ "./src/droppable.js");
-
-var _droppable2 = _interopRequireDefault(_droppable);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
+  var _default = {
+    draggable: _draggable.default,
+    droppable: _droppable.default,
     install: function install(Vue) {
-        Vue.directive('draggable', _draggable2.default);
-        Vue.directive('droppable', _droppable2.default);
+      Vue.directive('draggable', _draggable.default);
+      Vue.directive('droppable', _droppable.default);
     }
-};
-module.exports = exports.default;
+  };
+  _exports.default = _default;
+  module.exports = exports.default;
+});
 
 /***/ }),
 
@@ -352,7 +372,7 @@ module.exports = exports.default;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\Simon\Code\_opensource\v-drag-drop\src\index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! D:\OSS\v-drag-drop\src\index.js */"./src/index.js");
 
 
 /***/ })
