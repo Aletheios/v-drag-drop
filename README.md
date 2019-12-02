@@ -1,6 +1,6 @@
 # v-drag-drop
 
-**Minimalistic drag & drop directives for [Vue.js 2](https://vuejs.org/)**
+**Minimalistic drag & drop directives for [Vue.js](https://vuejs.org/)**
 
 Designed to encapsulate some of the peculiarities of the native Drag & Drop API and make it easier to use with Vue.js. Also adds some handy features like namespaces.
 
