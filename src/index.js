@@ -1,5 +1,5 @@
-import draggable from '@/draggable';
-import droppable from '@/droppable';
+import draggable from './draggable';
+import droppable from './droppable';
 
 export default {
     draggable,

@@ -47,10 +47,7 @@ const config = {
     },
     resolve: {
         modules: [path.resolve('./node_modules'), path.resolve('./src')],
-        extensions: ['.js'],
-        alias: {
-            '@': path.join(__dirname, 'src')
-        }
+        extensions: ['.js']
     },
     ...optimization
 };
