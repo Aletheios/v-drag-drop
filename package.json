@@ -1,6 +1,6 @@
 {
     "name": "v-drag-drop",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Minimalistic drag & drop directives for Vue.js",
     "keywords": [
         "vue",
@@ -15,7 +15,7 @@
         "type": "git",
         "url": "https://github.com/Aletheios/v-drag-drop"
     },
-    "main": "src/index.js",
+    "main": "dist/vDragDrop.js",
     "scripts": {
         "build": "webpack --env dev && webpack --env build",
         "demo": "http-server -p 1337",
@@ -24,21 +24,21 @@
         "start": "concurrently \"npm:dev\" \"npm:demo\""
     },
     "devDependencies": {
-        "@babel/core": "7.6.4",
-        "@babel/preset-env": "7.6.3",
+        "@babel/core": "7.8.4",
+        "@babel/preset-env": "7.8.4",
         "babel-core": "7.0.0-bridge.0",
         "babel-eslint": "10.0.3",
         "babel-loader": "8.0.6",
         "babel-plugin-add-module-exports": "1.0.2",
-        "concurrently": "5.0.0",
-        "eslint": "6.7.1",
-        "eslint-loader": "3.0.2",
-        "http-server": "0.12.0",
-        "terser": "4.4.0",
-        "terser-webpack-plugin": "2.2.1",
-        "webpack": "4.41.2",
-        "webpack-cli": "3.3.10",
-        "yargs": "15.0.2"
+        "concurrently": "5.1.0",
+        "eslint": "6.8.0",
+        "eslint-loader": "3.0.3",
+        "http-server": "0.12.1",
+        "terser": "4.6.3",
+        "terser-webpack-plugin": "2.3.4",
+        "webpack": "4.41.6",
+        "webpack-cli": "3.3.11",
+        "yargs": "15.1.0"
     },
     "peerDependencies": {
         "vue": "2.x"
