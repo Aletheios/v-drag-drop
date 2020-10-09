@@ -2,6 +2,8 @@
 
 **Minimalistic drag & drop directives for [Vue.js](https://vuejs.org/)**
 
+**Note: Version 2.x of v-drag-drop is compatible with Vue 3 only. Install version 1.x if you use Vue 2.**
+
 Designed to encapsulate some of the peculiarities of the native Drag & Drop API and make it easier to use with Vue.js. Also adds some handy features like namespaces.
 
 ## Table of Contents
@@ -13,7 +15,7 @@ Designed to encapsulate some of the peculiarities of the native Drag & Drop API 
 
 ## Installation
 
-Install `v-drag-drop` via npm:
+Install `v-drag-drop`:
 
 ```bash
 npm install --save v-drag-drop
@@ -22,17 +24,22 @@ npm install --save v-drag-drop
 Then import it in your project:
 
 ```javascript
-import Vue from 'vue';
+import { createApp } from 'vue';
 import vDragDrop from 'v-drag-drop';
-Vue.use(vDragDrop);
+
+const app = Vue.createApp(App);
+app.use(vDragDrop);
+app.mount('#app');
 ```
 
 Or include the files via `<script>` tag:
 ```html
-<script src="node_modules/vue/dist/vue.min.js"></script>
-<script src="node_modules/v-drag-drop/dist/vDragDrop.min.js"></script>
+<script src="https://unpkg.com/vue@3.0.0/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/v-drag-drop/dist/vDragDrop.min.js"></script>
 <script>
-    Vue.use(vDragDrop);
+    const app = Vue.createApp(App);
+    app.use(vDragDrop);
+    app.mount('#app');
 </script>
 ```
 
@@ -61,17 +68,21 @@ The following template example is the minimum setup required to get a draggable 
 This template example shows all the features supported by `v-drag-drop`. Check the [API section](#api) for details.
 
 ```html
-<div v-draggable:namespace.dynamic.move="myData"
-     @drag-start="onDragStart"
-     @drag-move="onDragMove"
-     @drag-end="onDragEnd">
+<div
+    v-draggable:namespace.dynamic.move="myData"
+    @drag-start="onDragStart"
+    @drag-move="onDragMove"
+    @drag-end="onDragEnd"
+>
 </div>
 
-<div v-droppable:namespace.dynamic
-     @drag-enter="onDragEnter"
-     @drag-over="onDragOver"
-     @drag-leave="onDragLeave"
-     @drag-drop="onDragDrop">
+<div
+    v-droppable:namespace.dynamic
+    @drag-enter="onDragEnter"
+    @drag-over="onDragOver"
+    @drag-leave="onDragLeave"
+    @drag-drop="onDragDrop"
+>
 </div>
 ```
 
@@ -91,14 +102,14 @@ This is the data you want to transfer to the drop zone. The data can be arbitrar
 Example:
 
 ```javascript
-Vue.component('my-component', {
+export default {
     template: '<div v-draggable="myData"></div>',
     data() {
         return {
             myData: { foobar: 42 }
         };
     }
-});
+};
 ```
 
 #### Argument
@@ -140,7 +151,7 @@ Namespaces can also be assigned dynamically using [dynamic arguments](https://vu
     Example:
 
     ```javascript
-    Vue.component('my-component', {
+    export default {
         template: '<div v-draggable:myNamespace.dynamic="myData"></div>',
         data() {
             return {
@@ -148,10 +159,10 @@ Namespaces can also be assigned dynamically using [dynamic arguments](https://vu
                 myNamespace: 'actualNamespaceName' // can be changed later
             };
         }
-    });
+    };
     ```
 
-    **Note:** The dynamic modifier is required to enable truly dynamic arguments whose values can change later in time. By contrast, ["dynamic" arguments in Vue 2.6+](https://vuejs.org/v2/guide/syntax.html#Dynamic-Arguments) are evaluated only once at the beginning and then statically passed to the directive. You can use those with `v-drag-drop` if you want, but they won't have the same effect as you'd get with the `dynamic` modifier.
+    **Note:** The dynamic modifier is required to enable truly dynamic arguments whose values can change later in time. By contrast, ["dynamic" arguments in Vue 2.6+](https://v3.vuejs.org/guide/template-syntax.html#dynamic-arguments) are evaluated only once at the beginning and then statically passed to the directive. You can use those with `v-drag-drop` if you want, but they won't have the same effect as you'd get with the `dynamic` modifier.
 
 #### Events
 

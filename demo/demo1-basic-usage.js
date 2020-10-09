@@ -1,18 +1,22 @@
 // This demo shows the most basic usage of v-drag-drop.
 
-window.Demo1 = Vue.component('demo1-basic-usage', {
+window.demos.Demo1 = {
     template: `
         <div>
             <h4>Demo 1: Basic usage</h4>
 
-            <div v-draggable.move="myData"
-                 class="draggableContainer">
+            <div
+                v-draggable.move="myData"
+                class="draggableContainer"
+            >
                 Drag me!
             </div>
 
-            <div v-droppable
-                 @drag-drop="onDrop"
-                 class="droppableContainer">
+            <div
+                v-droppable
+                @drag-drop="onDrop"
+                class="droppableContainer"
+            >
                 Drop me here!
             </div>
         </div>
@@ -31,4 +35,4 @@ window.Demo1 = Vue.component('demo1-basic-usage', {
             alert(`Dropped ${myData.foobar} on the drop zone!`);
         }
     }
-});
+};

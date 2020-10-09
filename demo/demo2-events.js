@@ -1,26 +1,30 @@
 // This demo shows the different events triggered by v-drag-drop. Open the browser console to see log messages.
 
-window.Demo2 = Vue.component('demo2-events', {
+window.demos.Demo2 = {
     template: `
         <div>
             <h4>Demo 2: Events</h4>
             Open the browser console to see log messages.
             <br><br>
 
-            <div v-draggable.move="myData"
-                 @drag-start="onDragStart"
-                 @drag-move="onDragMove"
-                 @drag-end="onDragEnd"
-                 class="draggableContainer">
+            <div
+                v-draggable.move="myData"
+                @drag-start="onDragStart"
+                @drag-move="onDragMove"
+                @drag-end="onDragEnd"
+                class="draggableContainer"
+            >
                 Drag me!
             </div>
 
-            <div v-droppable
-                 @drag-enter="onDragEnter"
-                 @drag-over="onDragOver"
-                 @drag-leave="onDragLeave"
-                 @drag-drop="onDrop"
-                 class="droppableContainer">
+            <div
+                v-droppable
+                @drag-enter="onDragEnter"
+                @drag-over="onDragOver"
+                @drag-leave="onDragLeave"
+                @drag-drop="onDrop"
+                class="droppableContainer"
+            >
                 Drop me here!
             </div>
         </div>
@@ -60,4 +64,4 @@ window.Demo2 = Vue.component('demo2-events', {
             console.log('Drop zone: Draggable element was dropped', myData);
         }
     }
-});
+};

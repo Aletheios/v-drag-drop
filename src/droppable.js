@@ -1,11 +1,9 @@
 import Common from './common';
 
 export default {
-    inserted(el, binding, vnode) {
-        const listeners = Common.getListeners(vnode);
-
+    mounted(el, binding, vnode) {
         function isDropAllowed() {
-            const dropTargetNamespace = Common.getNamespace(binding, vnode);
+            const dropTargetNamespace = Common.getNamespace(binding);
             const { namespace } = Common.transferredData[Common.dragInProgressKey];
             return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
         }
@@ -14,9 +12,9 @@ export default {
         el.addEventListener('dragenter', function(event){
             event.preventDefault();
 
-            if (listeners['drag-enter']) {
+            if (vnode.props['onDrag-enter']) {
                 const { dragData } = Common.transferredData[Common.dragInProgressKey];
-                listeners['drag-enter'](dragData, isDropAllowed(), event);
+                vnode.props['onDrag-enter'](dragData, isDropAllowed(), event);
             }
         }, false);
 
@@ -29,8 +27,8 @@ export default {
                 event.preventDefault(); // required to allow dropping
             }
 
-            if (listeners['drag-over']) {
-                listeners['drag-over'](dragData, dropAllowed, event);
+            if (vnode.props['onDrag-over']) {
+                vnode.props['onDrag-over'](dragData, dropAllowed, event);
             }
         }, false);
 
@@ -38,9 +36,9 @@ export default {
         el.addEventListener('dragleave', function(event){
             event.preventDefault();
 
-            if (listeners['drag-leave']) {
+            if (vnode.props['onDrag-leave']) {
                 const { dragData } = Common.transferredData[Common.dragInProgressKey];
-                listeners['drag-leave'](dragData, isDropAllowed(), event);
+                vnode.props['onDrag-leave'](dragData, isDropAllowed(), event);
             }
         }, false);
 
@@ -53,11 +51,11 @@ export default {
             const { dragData } = Common.transferredData[transferKey];
             
             Common.transferredData[transferKey].onDropCallback = function(){
-                if (listeners['drag-leave']) {
-                    listeners['drag-leave'](dragData, true, event);
+                if (vnode.props['onDrag-leave']) {
+                    vnode.props['onDrag-leave'](dragData, true, event);
                 }
-                if (listeners['drag-drop']) {
-                    listeners['drag-drop'](dragData, true, event);
+                if (vnode.props['onDrag-drop']) {
+                    vnode.props['onDrag-drop'](dragData, true, event);
                 }
             };
         }, false);

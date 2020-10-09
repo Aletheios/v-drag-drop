@@ -1,6 +1,6 @@
 // This demo shows a simple real-world use case scenario with draggable elements being moved into a container.
 
-Vue.component('demo3-draggable-element', {
+const Demo3DraggableElement = {
     template: `
         <div v-draggable.move="content" class="draggableContainer">
             {{ content }}
@@ -8,17 +8,23 @@ Vue.component('demo3-draggable-element', {
     `,
 
     props: ['content']
-});
+};
 
-Vue.component('demo3-drop-zone', {
+const Demo3DropZone = {
+    components: {
+        Demo3DraggableElement
+    },
+
     template: `
         <div v-droppable @drag-drop="onDrop" class="droppableContainer">
             <span v-if="droppedItems.length === 0">Drop items here</span>
 
             <!-- Render elements that have already been dropped -->
-            <demo3-draggable-element v-else
-                                     v-for="item in droppedItems" :key="item"
-                                     :content="item">
+            <demo3-draggable-element
+                v-else
+                v-for="item in droppedItems" :key="item"
+                :content="item"
+            >
             </demo3-draggable-element>
         </div>
     `,
@@ -34,17 +40,24 @@ Vue.component('demo3-drop-zone', {
             this.droppedItems.push(item);
         }
     }
-});
+};
 
-window.Demo3 = Vue.component('demo3-real-world-usage', {
+window.demos.Demo3 = {
+    components: {
+        Demo3DraggableElement,
+        Demo3DropZone
+    },
+
     template: `
         <div>
             <h4>Demo 3: Real-world usage</h4>
             
             <!-- Elements that have not been dropped yet -->
-            <demo3-draggable-element v-for="item in draggableItems" :key="item"
-                                     v-if="isItemDraggable(item)"
-                                     :content="item">
+            <demo3-draggable-element
+                v-for="item in draggableItems" :key="item"
+                v-if="isItemDraggable(item)"
+                :content="item"
+            >
             </demo3-draggable-element>
 
             <demo3-drop-zone :dropped-items="droppedItems"></demo3-drop-zone>
@@ -63,4 +76,4 @@ window.Demo3 = Vue.component('demo3-real-world-usage', {
             return !this.droppedItems.includes(item);
         }
     }
-});
+};

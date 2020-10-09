@@ -1,18 +1,22 @@
 // This demo shows how to use the local registration of the directives.
 
-window.Demo6 = Vue.component('demo6-local-registration', {
+window.demos.Demo6 = {
     template: `
         <div>
             <h4>Demo 6: Local registration</h4>
 
-            <div v-my-draggable.move="myData"
-                 class="draggableContainer">
+            <div
+                v-my-draggable.move="myData"
+                class="draggableContainer"
+            >
                 Drag me!
             </div>
 
-            <div v-my-droppable
-                 @drag-drop="onDrop"
-                 class="droppableContainer">
+            <div
+                v-my-droppable
+                @drag-drop="onDrop"
+                class="droppableContainer"
+            >
                 Drop me here!
             </div>
         </div>
@@ -36,4 +40,4 @@ window.Demo6 = Vue.component('demo6-local-registration', {
             alert(`Dropped ${myData.foobar} on the drop zone!`);
         }
     }
-});
+};

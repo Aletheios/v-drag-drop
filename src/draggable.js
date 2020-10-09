@@ -1,9 +1,8 @@
 import Common from './common';
 
 export default {
-    inserted(el, binding, vnode) {
+    mounted(el, binding, vnode) {
         const dragData = binding.modifiers.image ? binding.value.data : binding.value;
-        const listeners = Common.getListeners(vnode);
 
         el.setAttribute('draggable', true);
 
@@ -20,7 +19,7 @@ export default {
             
             Common.transferredData[transferKey] = {
                 dragData,
-                namespace: Common.getNamespace(binding, vnode),
+                namespace: Common.getNamespace(binding),
                 onDropCallback: null // will be set in droppable directive
             };
 
@@ -32,19 +31,19 @@ export default {
                 event.dataTransfer.setDragImage(binding.value.image, 10, 10);
             }
 
-            if (listeners['drag-start']) {
-                listeners['drag-start'](dragData, event);
+            if (vnode.props['onDrag-start']) {
+                vnode.props['onDrag-start'](dragData, event);
             }
         }, false);
 
 
         el.addEventListener('drag', function(event){
             if (binding.modifiers.dynamic) {
-                Common.transferredData[transferKey].namespace = Common.getNamespace(binding, vnode);
+                Common.transferredData[transferKey].namespace = Common.getNamespace(binding);
             }
 
-            if (listeners['drag-move']) {
-                listeners['drag-move'](dragData, event);
+            if (vnode.props['onDrag-move']) {
+                vnode.props['onDrag-move'](dragData, event);
             }
         });
         
@@ -60,8 +59,8 @@ export default {
                 delete Common.transferredData[transferKey];
             }
 
-            if (listeners['drag-end']) {
-                listeners['drag-end'](dragData, event);
+            if (vnode.props['onDrag-end']) {
+                vnode.props['onDrag-end'](dragData, event);
             }
         });
     }

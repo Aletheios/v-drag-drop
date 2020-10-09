@@ -1,6 +1,6 @@
 <!--
     Note: This is just the setup for the demo.
-    You can ignore the things in this file as they do not show how to use v-drag-drop. The only interesting part here is "Vue.use(vDragDrop)".
+    You can ignore the things in this file as they do not show how to use v-drag-drop. The only interesting part here is "app.use(vDragDrop)".
     Check the script files in this directory for the demo implementations.
 -->
 
@@ -51,22 +51,23 @@
         <div id="app">
             <h2>v-drag-drop</h2>
 
-            <router-link to="/demo1" tag="button">Demo 1: Basic usage</router-link>
-            <router-link to="/demo2" tag="button">Demo 2: Events</router-link>
-            <router-link to="/demo3" tag="button">Demo 3: Real-world usage</router-link>
-            <router-link to="/demo4" tag="button">Demo 4: Namespaces</router-link>
-            <router-link to="/demo5" tag="button">Demo 5: Dynamic namespaces</router-link>
-            <router-link to="/demo6" tag="button">Demo 6: Local registration</router-link>
-            <router-link to="/demo7" tag="button">Demo 7: Drag image</router-link>
+            <button @click="setDemo(1)">Demo 1: Basic usage</button>
+            <button @click="setDemo(2)">Demo 2: Events</button>
+            <button @click="setDemo(3)">Demo 3: Real-world usage</button>
+            <button @click="setDemo(4)">Demo 4: Namespaces</button>
+            <button @click="setDemo(5)">Demo 5: Dynamic namespaces</button>
+            <button @click="setDemo(6)">Demo 6: Local registration</button>
+            <button @click="setDemo(7)">Demo 7: Drag image</button>
             
             <br><br>
-            <router-view></router-view>
+            
+            <component :is="demoComponent"></component>
         </div>
 
-        <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
-        <script src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.min.js"></script>
+        <script src="https://unpkg.com/vue@3.0.0/dist/vue.global.prod.js"></script>
         <script src="../dist/vDragDrop.js"></script>
 
+        <script>window.demos = { };</script>
         <script src="demo1-basic-usage.js"></script>
         <script src="demo2-events.js"></script>
         <script src="demo3-real-world-usage.js"></script>
@@ -76,39 +77,29 @@
         <script src="demo7-drag-image.js"></script>
 
         <script>
-            Vue.use(vDragDrop);
-            Vue.use(VueRouter);
+            const App = {
+                components: window.demos,
+                data() {
+                    return {
+                        currentDemo: 1
+                    };
+                },
+                computed: {
+                    demoComponent() {
+                        return window.demos['Demo' + this.currentDemo];
+                    }
+                },
+                methods: {
+                    setDemo(demoNumber) {
+                        this.currentDemo = demoNumber;
+                    }
+                }
+            };
 
-            new Vue({
-                el: '#app',
-                router: new VueRouter({
-                    routes: [{
-                        path: '/demo1',
-                        component: window.Demo1
-                    }, {
-                        path: '/demo2',
-                        component: window.Demo2
-                    }, {
-                        path: '/demo3',
-                        component: window.Demo3
-                    }, {
-                        path: '/demo4',
-                        component: window.Demo4
-                    }, {
-                        path: '/demo5',
-                        component: window.Demo5
-                    }, {
-                        path: '/demo6',
-                        component: window.Demo6
-                    }, {
-                        path: '/demo7',
-                        component: window.Demo7
-                    }, {
-                        path: '*',
-                        redirect: '/demo1'
-                    }]
-                })
-            });
+            const app = Vue.createApp(App);
+            app.use(vDragDrop);
+            app.mount('#app');
+            window.app = app;
         </script>
     </body>
 </html>

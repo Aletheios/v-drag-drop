@@ -1,18 +1,22 @@
 // This demo shows how to use a custom drag image
 
-window.Demo7 = Vue.component('demo7-drag-image', {
+window.demos.Demo7 = {
     template: `
         <div>
             <h4>Demo 7: Custom drag image</h4>
 
-            <div v-draggable.image.move="{ data: myData, image: myImage }"
-                 class="draggableContainer">
+            <div
+                v-draggable.image.move="{ data: myData, image: myImage }"
+                class="draggableContainer"
+            >
                 Drag me!
             </div>
 
-            <div v-droppable
-                 @drag-drop="onDrop"
-                 class="droppableContainer">
+            <div
+                v-droppable
+                @drag-drop="onDrop"
+                class="droppableContainer"
+            >
                 Drop me here!
             </div>
         </div>
@@ -35,4 +39,4 @@ window.Demo7 = Vue.component('demo7-drag-image', {
             alert(`Dropped ${myData.foobar} on the drop zone!`);
         }
     }
-});
+};

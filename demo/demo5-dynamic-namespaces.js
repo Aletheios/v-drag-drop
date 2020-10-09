@@ -1,6 +1,6 @@
 // This demo shows how to use dynamic namespaces which allow you to assign namespaces with property variables.
 
-window.Demo5 = Vue.component('demo5-dynamic-namespaces', {
+window.demos.Demo5 = {
     template: `
         <div>
             <h4>Demo 5: Dynamic namespaces</h4>
@@ -13,24 +13,32 @@ window.Demo5 = Vue.component('demo5-dynamic-namespaces', {
             </label>
             <br><br><br>
             <!-- v-draggable also supports the "dynamic" modifier for namespaces, but we don't use it in this demo -->
-            <div v-draggable:myNamespace1.move="myData"
-                 class="draggableContainer">
+            <div
+                v-draggable:myNamespace1.move="myData"
+                class="draggableContainer"
+            >
                 Drag me to myNamespace1!
             </div>
-            <div v-draggable:myNamespace2.move="myData"
-                 class="draggableContainer dark">
+            <div
+                v-draggable:myNamespace2.move="myData"
+                class="draggableContainer dark"
+            >
                 Drag me to myNamespace2!
             </div>
-            <div v-droppable:dynamicNamespace1.dynamic
-                 @drag-over="onDragOver"
-                 @drag-drop="data => onDrop(data, dynamicNamespace1)"
-                 :class="{ droppableContainer: true, dark: dynamicNamespace1 === 'myNamespace2' }">
+            <div
+                v-droppable:dynamicNamespace1.dynamic
+                @drag-over="onDragOver"
+                @drag-drop="data => onDrop(data, dynamicNamespace1)"
+                :class="{ droppableContainer: true, dark: dynamicNamespace1 === 'myNamespace2' }"
+            >
                 {{ dynamicNamespace1 }}: Drop something here!
             </div>
-            <div v-droppable:dynamicNamespace2.dynamic
-                 @drag-over="onDragOver"
-                 @drag-drop="data => onDrop(data, dynamicNamespace2)"
-                 :class="{ droppableContainer: true, dark: dynamicNamespace2 === 'myNamespace2' }">
+            <div
+                v-droppable:dynamicNamespace2.dynamic
+                @drag-over="onDragOver"
+                @drag-drop="data => onDrop(data, dynamicNamespace2)"
+                :class="{ droppableContainer: true, dark: dynamicNamespace2 === 'myNamespace2' }"
+            >
                 {{ dynamicNamespace2 }}: Drop something here!
             </div>
         </div>
@@ -73,4 +81,4 @@ window.Demo5 = Vue.component('demo5-dynamic-namespaces', {
             }
         }
     }
-});
+};
