@@ -1,6 +1,6 @@
 {
     "name": "v-drag-drop",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "description": "Minimalistic drag & drop directives for Vue.js",
     "keywords": [
         "vue",
@@ -41,6 +41,6 @@
         "yargs": "16.0.3"
     },
     "peerDependencies": {
-        "vue": "3.x"
+        "vue": ">= 3.0.1"
     }
 }

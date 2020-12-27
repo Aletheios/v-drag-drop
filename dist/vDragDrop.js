@@ -370,7 +370,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /dev/shm/v-drag-drop/src/index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! D:\Simon\Code\opensource\v-drag-drop\src\index.js */"./src/index.js");
 
 
 /***/ })

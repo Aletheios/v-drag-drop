@@ -2,7 +2,7 @@
 
 **Minimalistic drag & drop directives for [Vue.js](https://vuejs.org/)**
 
-**Note: Version 2.x of v-drag-drop is compatible with Vue 3 only. Install version 1.x if you use Vue 2.**
+**Note: Versions 2.x and above of v-drag-drop are compatible with Vue 3 only. Install version 1.x if you use Vue 2.**
 
 Designed to encapsulate some of the peculiarities of the native Drag & Drop API and make it easier to use with Vue.js. Also adds some handy features like namespaces.
 
