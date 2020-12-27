@@ -2,7 +2,11 @@ import Common from './common';
 
 export default {
     mounted(el, binding, vnode) {
-        const dragData = binding.modifiers.image ? binding.value.data : binding.value;
+        let dragData = binding.modifiers.image ? binding.value.data : binding.value;
+
+        binding.dir.updated = (_, _binding) => {
+            dragData = _binding.modifiers.image ? _binding.value.data : _binding.value;
+        };
 
         el.setAttribute('draggable', true);
 
@@ -13,10 +17,9 @@ export default {
         // Only transfer the key and use an external store for the actual data
         const transferKey = +new Date() + '';
 
-
         el.addEventListener('dragstart', function(event){
             Common.dragInProgressKey = transferKey;
-            
+
             Common.transferredData[transferKey] = {
                 dragData,
                 namespace: Common.getNamespace(binding),
@@ -26,13 +29,13 @@ export default {
             event.dataTransfer.setData('text/plain', transferKey);
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
-            
+
             if (binding.modifiers.image) {
                 event.dataTransfer.setDragImage(binding.value.image, 10, 10);
             }
 
-            if (vnode.props['onDrag-start']) {
-                vnode.props['onDrag-start'](dragData, event);
+            if (vnode.props.onDragStart) {
+                vnode.props.onDragStart(dragData, event);
             }
         }, false);
 
@@ -42,12 +45,12 @@ export default {
                 Common.transferredData[transferKey].namespace = Common.getNamespace(binding);
             }
 
-            if (vnode.props['onDrag-move']) {
-                vnode.props['onDrag-move'](dragData, event);
+            if (vnode.props.onDragMove) {
+                vnode.props.onDragMove(dragData, event);
             }
         });
-        
-        
+
+
         el.addEventListener('dragend', function(event){
             Common.dragInProgressKey = null;
 
@@ -59,8 +62,8 @@ export default {
                 delete Common.transferredData[transferKey];
             }
 
-            if (vnode.props['onDrag-end']) {
-                vnode.props['onDrag-end'](dragData, event);
+            if (vnode.props.onDragEnd) {
+                vnode.props.onDragEnd(dragData, event);
             }
         });
     }
