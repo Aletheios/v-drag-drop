@@ -168,9 +168,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   var dataMap = new WeakMap();
 
-  var updateDragData = function updateDragData(el, binding) {
+  function updateDragData(el, binding) {
     dataMap.set(el, binding.modifiers.image ? binding.value.data : binding.value);
-  };
+  }
 
   var _default = {
     updated: function updated(el, binding) {
@@ -188,7 +188,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       } // Only transfer the key and use an external store for the actual data
 
 
-      var transferKey = +new Date() + '';
+      var transferKey = Date.now() + '';
       el.addEventListener('dragstart', function (event) {
         var dragData = dataMap.get(el);
         _common.default.dragInProgressKey = transferKey;
@@ -378,7 +378,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /srv/www/Projects/try-outs/v-drag-drop/src/index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! D:\OSS\v-drag-drop\src\index.js */"./src/index.js");
 
 
 /***/ })

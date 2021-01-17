@@ -4,12 +4,21 @@ window.demos.Demo8 = {
             <h4>Demo 8: Changing drag data</h4>
 
             <div
-                v-draggable.move="dragData"
+                v-draggable.move="dragData1"
                 class="draggableContainer"
                 @drag-start="onDragStart"
             >
                 Drag me!
-                <div>My data: {{ dragData }}</div>
+                <div>My data: {{ dragData1 }}</div>
+            </div>
+
+            <div
+                v-draggable.move="dragData2"
+                class="draggableContainer"
+                @drag-start="onDragStart"
+            >
+                Or drag me!
+                <div>My data: {{ dragData2 }}</div>
             </div>
 
             <div
@@ -25,21 +34,28 @@ window.demos.Demo8 = {
 
     data() {
         return {
-            counter: 1,
+            counter1: 1,
+            counter2: 1,
             droppedData: null
         };
     },
 
     computed: {
-        dragData() {
+        dragData1() {
             return {
-                counter: this.counter
+                counter: this.counter1
+            };
+        },
+        dragData2() {
+            return {
+                counter: this.counter2
             };
         }
     },
 
     created() {
-        this.interval = setInterval(() => ++this.counter, 500);
+        this.interval = setInterval(() => ++this.counter1, 500);
+        this.interval = setInterval(() => ++this.counter2, 1000);
     },
 
     beforeUnmount() {

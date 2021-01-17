@@ -2,17 +2,19 @@ import Common from './common';
 
 const dataMap = new WeakMap();
 
-const updateDragData = (el, binding) => {
+function updateDragData(el, binding) {
     dataMap.set(el, binding.modifiers.image ? binding.value.data : binding.value);
-};
+}
 
 export default {
     updated(el, binding) {
         updateDragData(el, binding);
     },
+
     beforeUnmount(el) {
         dataMap.delete(el);
     },
+
     mounted(el, binding, vnode) {
         updateDragData(el, binding);
 
@@ -23,7 +25,7 @@ export default {
         }
 
         // Only transfer the key and use an external store for the actual data
-        const transferKey = +new Date() + '';
+        const transferKey = Date.now() + '';
 
         el.addEventListener('dragstart', function(event){
             const dragData = dataMap.get(el);
