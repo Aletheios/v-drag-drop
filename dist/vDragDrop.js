@@ -166,14 +166,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+  var dataMap = new WeakMap();
+
+  var updateDragData = function updateDragData(el, binding) {
+    dataMap.set(el, binding.modifiers.image ? binding.value.data : binding.value);
+  };
+
   var _default = {
+    updated: function updated(el, binding) {
+      updateDragData(el, binding);
+    },
+    beforeUnmount: function beforeUnmount(el) {
+      dataMap.delete(el);
+    },
     mounted: function mounted(el, binding, vnode) {
-      var dragData = binding.modifiers.image ? binding.value.data : binding.value;
-
-      binding.dir.updated = function (_, _binding) {
-        dragData = _binding.modifiers.image ? _binding.value.data : _binding.value;
-      };
-
+      updateDragData(el, binding);
       el.setAttribute('draggable', true);
 
       if (binding.modifiers && binding.modifiers.move) {
@@ -183,6 +190,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       var transferKey = +new Date() + '';
       el.addEventListener('dragstart', function (event) {
+        var dragData = dataMap.get(el);
         _common.default.dragInProgressKey = transferKey;
         _common.default.transferredData[transferKey] = {
           dragData: dragData,
@@ -208,7 +216,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         if (vnode.props.onDragMove) {
-          vnode.props.onDragMove(dragData, event);
+          vnode.props.onDragMove(dataMap.get(el), event);
         }
       });
       el.addEventListener('dragend', function (event) {
@@ -226,7 +234,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         if (vnode.props.onDragEnd) {
-          vnode.props.onDragEnd(dragData, event);
+          vnode.props.onDragEnd(dataMap.get(el), event);
         }
       });
     }
@@ -370,7 +378,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\Simon\Code\opensource\v-drag-drop\src\index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! /srv/www/Projects/try-outs/v-drag-drop/src/index.js */"./src/index.js");
 
 
 /***/ })

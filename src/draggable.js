@@ -1,12 +1,20 @@
 import Common from './common';
 
-export default {
-    mounted(el, binding, vnode) {
-        let dragData = binding.modifiers.image ? binding.value.data : binding.value;
+const dataMap = new WeakMap();
 
-        binding.dir.updated = (_, _binding) => {
-            dragData = _binding.modifiers.image ? _binding.value.data : _binding.value;
-        };
+const updateDragData = (el, binding) => {
+    dataMap.set(el, binding.modifiers.image ? binding.value.data : binding.value);
+};
+
+export default {
+    updated(el, binding) {
+        updateDragData(el, binding);
+    },
+    beforeUnmount(el) {
+        dataMap.delete(el);
+    },
+    mounted(el, binding, vnode) {
+        updateDragData(el, binding);
 
         el.setAttribute('draggable', true);
 
@@ -18,6 +26,7 @@ export default {
         const transferKey = +new Date() + '';
 
         el.addEventListener('dragstart', function(event){
+            const dragData = dataMap.get(el);
             Common.dragInProgressKey = transferKey;
 
             Common.transferredData[transferKey] = {
@@ -46,7 +55,7 @@ export default {
             }
 
             if (vnode.props.onDragMove) {
-                vnode.props.onDragMove(dragData, event);
+                vnode.props.onDragMove(dataMap.get(el), event);
             }
         });
 
@@ -63,7 +72,7 @@ export default {
             }
 
             if (vnode.props.onDragEnd) {
-                vnode.props.onDragEnd(dragData, event);
+                vnode.props.onDragEnd(dataMap.get(el), event);
             }
         });
     }
