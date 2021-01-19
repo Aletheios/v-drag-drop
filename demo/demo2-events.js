@@ -9,9 +9,9 @@ window.demos.Demo2 = {
 
             <div
                 v-draggable.move="myData"
-                @drag-start="onDragStart"
-                @drag-move="onDragMove"
-                @drag-end="onDragEnd"
+                @v-drag-start="onDragStart"
+                @v-drag-move="onDragMove"
+                @v-drag-end="onDragEnd"
                 class="draggableContainer"
             >
                 Drag me!
@@ -19,10 +19,10 @@ window.demos.Demo2 = {
 
             <div
                 v-droppable
-                @drag-enter="onDragEnter"
-                @drag-over="onDragOver"
-                @drag-leave="onDragLeave"
-                @drag-drop="onDrop"
+                @v-drag-enter="onDragEnter"
+                @v-drag-over="onDragOver"
+                @v-drag-leave="onDragLeave"
+                @v-drag-drop="onDrop"
                 class="droppableContainer"
             >
                 Drop me here!

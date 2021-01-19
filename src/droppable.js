@@ -11,9 +11,9 @@ export default {
         el.addEventListener('dragenter', function(event){
             event.preventDefault();
 
-            if (vnode.props.onDragEnter) {
+            if (vnode.props.onVDragEnter) {
                 const { dragData } = Common.transferredData[Common.dragInProgressKey];
-                vnode.props.onDragEnter(dragData, isDropAllowed(), event);
+                vnode.props.onVDragEnter(dragData, isDropAllowed(), event);
             }
         }, false);
 
@@ -26,8 +26,8 @@ export default {
                 event.preventDefault(); // required to allow dropping
             }
 
-            if (vnode.props.onDragOver) {
-                vnode.props.onDragOver(dragData, dropAllowed, event);
+            if (vnode.props.onVDragOver) {
+                vnode.props.onVDragOver(dragData, dropAllowed, event);
             }
         }, false);
 
@@ -35,9 +35,9 @@ export default {
         el.addEventListener('dragleave', function(event){
             event.preventDefault();
 
-            if (vnode.props.onDragLeave) {
+            if (vnode.props.onVDragLeave) {
                 const { dragData } = Common.transferredData[Common.dragInProgressKey];
-                vnode.props.onDragLeave(dragData, isDropAllowed(), event);
+                vnode.props.onVDragLeave(dragData, isDropAllowed(), event);
             }
         }, false);
 
@@ -50,11 +50,11 @@ export default {
             const { dragData } = Common.transferredData[transferKey];
 
             Common.transferredData[transferKey].onDropCallback = function(){
-                if (vnode.props.onDragLeave) {
-                    vnode.props.onDragLeave(dragData, true, event);
+                if (vnode.props.onVDragLeave) {
+                    vnode.props.onVDragLeave(dragData, true, event);
                 }
-                if (vnode.props.onDragDrop) {
-                    vnode.props.onDragDrop(dragData, true, event);
+                if (vnode.props.onVDragDrop) {
+                    vnode.props.onVDragDrop(dragData, true, event);
                 }
             };
         }, false);

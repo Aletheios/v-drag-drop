@@ -14,7 +14,7 @@ window.demos.Demo6 = {
 
             <div
                 v-my-droppable
-                @drag-drop="onDrop"
+                @v-drag-drop="onDrop"
                 class="droppableContainer"
             >
                 Drop me here!

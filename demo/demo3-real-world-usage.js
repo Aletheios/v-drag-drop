@@ -16,7 +16,7 @@ const Demo3DropZone = {
     },
 
     template: `
-        <div v-droppable @drag-drop="onDrop" class="droppableContainer">
+        <div v-droppable @v-drag-drop="onDrop" class="droppableContainer">
             <span v-if="droppedItems.length === 0">Drop items here</span>
 
             <!-- Render elements that have already been dropped -->

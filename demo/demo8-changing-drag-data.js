@@ -6,7 +6,7 @@ window.demos.Demo8 = {
             <div
                 v-draggable.move="dragData1"
                 class="draggableContainer"
-                @drag-start="onDragStart"
+                @v-drag-start="onDragStart"
             >
                 Drag me!
                 <div>My data: {{ dragData1 }}</div>
@@ -15,7 +15,7 @@ window.demos.Demo8 = {
             <div
                 v-draggable.move="dragData2"
                 class="draggableContainer"
-                @drag-start="onDragStart"
+                @v-drag-start="onDragStart"
             >
                 Or drag me!
                 <div>My data: {{ dragData2 }}</div>
@@ -23,7 +23,7 @@ window.demos.Demo8 = {
 
             <div
                 v-droppable
-                @drag-drop="onDrop"
+                @v-drag-drop="onDrop"
                 class="droppableContainer"
             >
                 Drop something here!

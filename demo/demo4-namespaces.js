@@ -20,14 +20,14 @@ window.demos.Demo4 = {
 
             <div
                 v-droppable:myNamespace1
-                @drag-drop="data => onDrop(data, '1')"
+                @v-drag-drop="data => onDrop(data, '1')"
                 class="droppableContainer"
             >
                 Drop #1 here!
             </div>
             <div
                 v-droppable:myNamespace2
-                @drag-drop="data => onDrop(data, '2')"
+                @v-drag-drop="data => onDrop(data, '2')"
                 class="droppableContainer dark"
             >
                 Drop #2 here!

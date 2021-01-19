@@ -206,8 +206,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           event.dataTransfer.setDragImage(binding.value.image, 10, 10);
         }
 
-        if (vnode.props.onDragStart) {
-          vnode.props.onDragStart(dragData, event);
+        if (vnode.props.onVDragStart) {
+          vnode.props.onVDragStart(dragData, event);
         }
       }, false);
       el.addEventListener('drag', function (event) {
@@ -215,8 +215,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           _common.default.transferredData[transferKey].namespace = _common.default.getNamespace(binding);
         }
 
-        if (vnode.props.onDragMove) {
-          vnode.props.onDragMove(dataMap.get(el), event);
+        if (vnode.props.onVDragMove) {
+          vnode.props.onVDragMove(dataMap.get(el), event);
         }
       });
       el.addEventListener('dragend', function (event) {
@@ -233,8 +233,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           delete _common.default.transferredData[transferKey];
         }
 
-        if (vnode.props.onDragEnd) {
-          vnode.props.onDragEnd(dataMap.get(el), event);
+        if (vnode.props.onVDragEnd) {
+          vnode.props.onVDragEnd(dataMap.get(el), event);
         }
       });
     }
@@ -282,9 +282,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       el.addEventListener('dragenter', function (event) {
         event.preventDefault();
 
-        if (vnode.props.onDragEnter) {
+        if (vnode.props.onVDragEnter) {
           var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
-          vnode.props.onDragEnter(dragData, isDropAllowed(), event);
+          vnode.props.onVDragEnter(dragData, isDropAllowed(), event);
         }
       }, false);
       el.addEventListener('dragover', function (event) {
@@ -295,16 +295,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           event.preventDefault(); // required to allow dropping
         }
 
-        if (vnode.props.onDragOver) {
-          vnode.props.onDragOver(dragData, dropAllowed, event);
+        if (vnode.props.onVDragOver) {
+          vnode.props.onVDragOver(dragData, dropAllowed, event);
         }
       }, false);
       el.addEventListener('dragleave', function (event) {
         event.preventDefault();
 
-        if (vnode.props.onDragLeave) {
+        if (vnode.props.onVDragLeave) {
           var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
-          vnode.props.onDragLeave(dragData, isDropAllowed(), event);
+          vnode.props.onVDragLeave(dragData, isDropAllowed(), event);
         }
       }, false);
       el.addEventListener('drop', function (event) {
@@ -314,12 +314,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var dragData = _common.default.transferredData[transferKey].dragData;
 
         _common.default.transferredData[transferKey].onDropCallback = function () {
-          if (vnode.props.onDragLeave) {
-            vnode.props.onDragLeave(dragData, true, event);
+          if (vnode.props.onVDragLeave) {
+            vnode.props.onVDragLeave(dragData, true, event);
           }
 
-          if (vnode.props.onDragDrop) {
-            vnode.props.onDragDrop(dragData, true, event);
+          if (vnode.props.onVDragDrop) {
+            vnode.props.onVDragDrop(dragData, true, event);
           }
         };
       }, false);

@@ -62,7 +62,7 @@ The following template example is the minimum setup required to get a draggable 
 
 ```html
 <div v-draggable="myData"></div>
-<div v-droppable @drag-drop="handleDrop"></div>
+<div v-droppable @v-drag-drop="handleDrop"></div>
 ```
 
 This template example shows all the features supported by `v-drag-drop`. Check the [API section](#api) for details.
@@ -70,23 +70,28 @@ This template example shows all the features supported by `v-drag-drop`. Check t
 ```html
 <div
     v-draggable:namespace.dynamic.move="myData"
-    @drag-start="onDragStart"
-    @drag-move="onDragMove"
-    @drag-end="onDragEnd"
+    @v-drag-start="onDragStart"
+    @v-drag-move="onDragMove"
+    @v-drag-end="onDragEnd"
 >
 </div>
 
 <div
     v-droppable:namespace.dynamic
-    @drag-enter="onDragEnter"
-    @drag-over="onDragOver"
-    @drag-leave="onDragLeave"
-    @drag-drop="onDragDrop"
+    @v-drag-enter="onDragEnter"
+    @v-drag-over="onDragOver"
+    @v-drag-leave="onDragLeave"
+    @v-drag-drop="onDragDrop"
 >
 </div>
 ```
 
 Also check the demos in the `demo` directory. You can run the demos with `npm run demo`. Open your browser at `http://127.0.0.1:1337/demo`.
+
+
+## Migration from version 3
+
+In version 4 and above, custom events have been renamed to avoid clashes with the native events. Therefore, when migrating to the new version, you will have to give all event names a `v-` prefix. For example, `@drag-start` will become `@v-drag-start`.
 
 
 ## API
@@ -122,16 +127,16 @@ Example:
 
 ```html
 <div v-draggable:foo="myData"></div>
-<div v-droppable:foo @drag-drop="handleDrop"></div> <!-- supports drop -->
-<div v-droppable:bar @drag-drop="handleDrop"></div> <!-- drop prevented -->
+<div v-droppable:foo @v-drag-drop="handleDrop"></div> <!-- supports drop -->
+<div v-droppable:bar @v-drag-drop="handleDrop"></div> <!-- drop prevented -->
 ```
 
 Namespaces can also be assigned dynamically using [dynamic arguments](https://vuejs.org/v2/guide/syntax.html#Dynamic-Arguments) starting with Vue 2.6:
 
 ```html
 <div v-draggable:[namespaceName]="myData"></div>
-<div v-droppable:[namespaceName] @drag-drop="handleDrop"></div> <!-- supports drop -->
-<div v-droppable:foobar @drag-drop="handleDrop"></div> <!-- drop prevented -->
+<div v-droppable:[namespaceName] @v-drag-drop="handleDrop"></div> <!-- supports drop -->
+<div v-droppable:foobar @v-drag-drop="handleDrop"></div> <!-- drop prevented -->
 ```
 
 #### Modifiers

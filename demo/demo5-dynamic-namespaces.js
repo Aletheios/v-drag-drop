@@ -27,16 +27,16 @@ window.demos.Demo5 = {
             </div>
             <div
                 v-droppable:dynamicNamespace1.dynamic
-                @drag-over="onDragOver"
-                @drag-drop="data => onDrop(data, dynamicNamespace1)"
+                @v-drag-over="onDragOver"
+                @v-drag-drop="data => onDrop(data, dynamicNamespace1)"
                 :class="{ droppableContainer: true, dark: dynamicNamespace1 === 'myNamespace2' }"
             >
                 {{ dynamicNamespace1 }}: Drop something here!
             </div>
             <div
                 v-droppable:dynamicNamespace2.dynamic
-                @drag-over="onDragOver"
-                @drag-drop="data => onDrop(data, dynamicNamespace2)"
+                @v-drag-over="onDragOver"
+                @v-drag-drop="data => onDrop(data, dynamicNamespace2)"
                 :class="{ droppableContainer: true, dark: dynamicNamespace2 === 'myNamespace2' }"
             >
                 {{ dynamicNamespace2 }}: Drop something here!

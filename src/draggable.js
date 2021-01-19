@@ -45,8 +45,8 @@ export default {
                 event.dataTransfer.setDragImage(binding.value.image, 10, 10);
             }
 
-            if (vnode.props.onDragStart) {
-                vnode.props.onDragStart(dragData, event);
+            if (vnode.props.onVDragStart) {
+                vnode.props.onVDragStart(dragData, event);
             }
         }, false);
 
@@ -56,8 +56,8 @@ export default {
                 Common.transferredData[transferKey].namespace = Common.getNamespace(binding);
             }
 
-            if (vnode.props.onDragMove) {
-                vnode.props.onDragMove(dataMap.get(el), event);
+            if (vnode.props.onVDragMove) {
+                vnode.props.onVDragMove(dataMap.get(el), event);
             }
         });
 
@@ -73,8 +73,8 @@ export default {
                 delete Common.transferredData[transferKey];
             }
 
-            if (vnode.props.onDragEnd) {
-                vnode.props.onDragEnd(dataMap.get(el), event);
+            if (vnode.props.onVDragEnd) {
+                vnode.props.onVDragEnd(dataMap.get(el), event);
             }
         });
     }
