@@ -1,16 +1,29 @@
-export default {
-    transferredData: { },
-    dragInProgressKey: null,
+const elementMap = new WeakMap();
 
-    getNamespace(binding) {
-        const argument = binding.arg;
-        if (typeof argument !== 'string') {
-            return null;
-        }
-        if (binding.modifiers.dynamic) {
-            const namespace = binding.instance[argument];
-            return typeof namespace !== 'string' ? null : namespace;
-        }
-        return argument;
+export const transferredData = { };
+
+export let dragInProgressKey = null;
+export function setDragInProgressKey(key) {
+    dragInProgressKey = key;
+}
+
+export function setElementData(el, binding, vnode) {
+    elementMap.set(el, { binding, vnode });
+}
+export function getElementData(el) {
+    return elementMap.get(el);
+}
+export function forgetElement(el) {
+    elementMap.delete(el);
+}
+
+export function getNamespace(el) {
+    const { binding } = getElementData(el);
+    return binding.arg;
+}
+export function emit(el, event, ...args) {
+    const { vnode } = getElementData(el);
+    if (vnode.props && vnode.props[event]) {
+        vnode.props[event](...args);
     }
-};
+}

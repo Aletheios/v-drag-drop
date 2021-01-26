@@ -1,22 +1,29 @@
-import Common from './common';
+import {
+    setElementData,
+    getElementData,
+    forgetElement,
+    transferredData,
+    setDragInProgressKey,
+    getNamespace,
+    emit
+} from './common';
 
-const dataMap = new WeakMap();
-
-function updateDragData(el, binding) {
-    dataMap.set(el, binding.modifiers.image ? binding.value.data : binding.value);
+function getDragValue(el) {
+    const { binding } = getElementData(el);
+    return binding.modifiers.image ? binding.value.data : binding.value;
 }
 
 export default {
-    updated(el, binding) {
-        updateDragData(el, binding);
+    updated(el, binding, vnode) {
+        setElementData(el, binding, vnode);
     },
 
     beforeUnmount(el) {
-        dataMap.delete(el);
+        forgetElement(el);
     },
 
     mounted(el, binding, vnode) {
-        updateDragData(el, binding);
+        setElementData(el, binding, vnode);
 
         el.setAttribute('draggable', true);
 
@@ -28,12 +35,12 @@ export default {
         const transferKey = Date.now() + '';
 
         el.addEventListener('dragstart', function(event){
-            const dragData = dataMap.get(el);
-            Common.dragInProgressKey = transferKey;
+            const dragData = getDragValue(el);
+            setDragInProgressKey(transferKey);
 
-            Common.transferredData[transferKey] = {
+            transferredData[transferKey] = {
                 dragData,
-                namespace: Common.getNamespace(binding),
+                namespace: getNamespace(el),
                 onDropCallback: null // will be set in droppable directive
             };
 
@@ -41,41 +48,32 @@ export default {
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
 
-            if (binding.modifiers.image) {
-                event.dataTransfer.setDragImage(binding.value.image, 10, 10);
+            const { binding: _binding } = getElementData(el);
+            if (_binding.modifiers.image) {
+                event.dataTransfer.setDragImage(_binding.value.image, 10, 10);
             }
 
-            if (vnode.props.onVDragStart) {
-                vnode.props.onVDragStart(dragData, event);
-            }
+            emit(el, 'onVDragStart', dragData, event);
         }, false);
 
 
         el.addEventListener('drag', function(event){
-            if (binding.modifiers.dynamic) {
-                Common.transferredData[transferKey].namespace = Common.getNamespace(binding);
-            }
-
-            if (vnode.props.onVDragMove) {
-                vnode.props.onVDragMove(dataMap.get(el), event);
-            }
+            emit(el, 'onVDragMove', getDragValue(el), event);
         });
 
 
         el.addEventListener('dragend', function(event){
-            Common.dragInProgressKey = null;
+            setDragInProgressKey(null);
 
-            if (Common.transferredData[transferKey]) {
-                if (typeof Common.transferredData[transferKey].onDropCallback === 'function') {
-                    const callback = Common.transferredData[transferKey].onDropCallback;
+            if (transferredData[transferKey]) {
+                if (typeof transferredData[transferKey].onDropCallback === 'function') {
+                    const callback = transferredData[transferKey].onDropCallback;
                     setTimeout(() => callback(), 0);
                 }
-                delete Common.transferredData[transferKey];
+                delete transferredData[transferKey];
             }
 
-            if (vnode.props.onVDragEnd) {
-                vnode.props.onVDragEnd(dataMap.get(el), event);
-            }
+            emit(el, 'onVDragEnd', getDragValue(el), event);
         });
     }
 };

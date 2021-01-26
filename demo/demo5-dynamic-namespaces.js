@@ -14,19 +14,19 @@ window.demos.Demo5 = {
             <br><br><br>
             <!-- v-draggable also supports the "dynamic" modifier for namespaces, but we don't use it in this demo -->
             <div
-                v-draggable:myNamespace1.move="myData"
+                v-draggable:[dynamicNamespace1].move="myData"
                 class="draggableContainer"
             >
                 Drag me to myNamespace1!
             </div>
             <div
-                v-draggable:myNamespace2.move="myData"
+                v-draggable:[dynamicNamespace2].move="myData"
                 class="draggableContainer dark"
             >
                 Drag me to myNamespace2!
             </div>
             <div
-                v-droppable:dynamicNamespace1.dynamic
+                v-droppable:[dynamicNamespace1]
                 @v-drag-over="onDragOver"
                 @v-drag-drop="data => onDrop(data, dynamicNamespace1)"
                 :class="{ droppableContainer: true, dark: dynamicNamespace1 === 'myNamespace2' }"
@@ -34,7 +34,7 @@ window.demos.Demo5 = {
                 {{ dynamicNamespace1 }}: Drop something here!
             </div>
             <div
-                v-droppable:dynamicNamespace2.dynamic
+                v-droppable:[dynamicNamespace2]
                 @v-drag-over="onDragOver"
                 @v-drag-drop="data => onDrop(data, dynamicNamespace2)"
                 :class="{ droppableContainer: true, dark: dynamicNamespace2 === 'myNamespace2' }"
