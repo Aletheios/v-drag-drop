@@ -116,27 +116,59 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.default = void 0;
-  var _default = {
-    transferredData: {},
-    dragInProgressKey: null,
-    getNamespace: function getNamespace(binding) {
-      var argument = binding.arg;
+  _exports.setDragInProgressKey = setDragInProgressKey;
+  _exports.setElementData = setElementData;
+  _exports.getElementData = getElementData;
+  _exports.forgetElement = forgetElement;
+  _exports.getNamespace = getNamespace;
+  _exports.emit = emit;
+  _exports.dragInProgressKey = _exports.transferredData = void 0;
+  var elementMap = new WeakMap();
+  var transferredData = {};
+  _exports.transferredData = transferredData;
+  var dragInProgressKey = null;
+  _exports.dragInProgressKey = dragInProgressKey;
 
-      if (typeof argument !== 'string') {
-        return null;
+  function setDragInProgressKey(key) {
+    _exports.dragInProgressKey = dragInProgressKey = key;
+  }
+
+  function setElementData(el, binding, vnode) {
+    elementMap.set(el, {
+      binding: binding,
+      vnode: vnode
+    });
+  }
+
+  function getElementData(el) {
+    return elementMap.get(el);
+  }
+
+  function forgetElement(el) {
+    elementMap.delete(el);
+  }
+
+  function getNamespace(el) {
+    var _getElementData = getElementData(el),
+        binding = _getElementData.binding;
+
+    return binding.arg;
+  }
+
+  function emit(el, event) {
+    var _getElementData2 = getElementData(el),
+        vnode = _getElementData2.vnode;
+
+    if (vnode.props && vnode.props[event]) {
+      var _vnode$props;
+
+      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        args[_key - 2] = arguments[_key];
       }
 
-      if (binding.modifiers.dynamic) {
-        var namespace = binding.instance[argument];
-        return typeof namespace !== 'string' ? null : namespace;
-      }
-
-      return argument;
+      (_vnode$props = vnode.props)[event].apply(_vnode$props, args);
     }
-  };
-  _exports.default = _default;
-  module.exports = exports.default;
+  }
 });
 
 /***/ }),
@@ -162,25 +194,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     value: true
   });
   _exports.default = void 0;
-  _common = _interopRequireDefault(_common);
 
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  function getDragValue(el) {
+    var _getElementData = (0, _common.getElementData)(el),
+        binding = _getElementData.binding;
 
-  var dataMap = new WeakMap();
-
-  function updateDragData(el, binding) {
-    dataMap.set(el, binding.modifiers.image ? binding.value.data : binding.value);
+    return binding.modifiers.image ? binding.value.data : binding.value;
   }
 
   var _default = {
-    updated: function updated(el, binding) {
-      updateDragData(el, binding);
+    updated: function updated(el, binding, vnode) {
+      (0, _common.setElementData)(el, binding, vnode);
     },
     beforeUnmount: function beforeUnmount(el) {
-      dataMap.delete(el);
+      (0, _common.forgetElement)(el);
     },
     mounted: function mounted(el, binding, vnode) {
-      updateDragData(el, binding);
+      (0, _common.setElementData)(el, binding, vnode);
       el.setAttribute('draggable', true);
 
       if (binding.modifiers && binding.modifiers.move) {
@@ -190,11 +220,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       var transferKey = Date.now() + '';
       el.addEventListener('dragstart', function (event) {
-        var dragData = dataMap.get(el);
-        _common.default.dragInProgressKey = transferKey;
-        _common.default.transferredData[transferKey] = {
+        var dragData = getDragValue(el);
+        (0, _common.setDragInProgressKey)(transferKey);
+        _common.transferredData[transferKey] = {
           dragData: dragData,
-          namespace: _common.default.getNamespace(binding),
+          namespace: (0, _common.getNamespace)(el),
           onDropCallback: null // will be set in droppable directive
 
         };
@@ -202,40 +232,33 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.dropEffect = 'move';
 
-        if (binding.modifiers.image) {
-          event.dataTransfer.setDragImage(binding.value.image, 10, 10);
+        var _getElementData2 = (0, _common.getElementData)(el),
+            _binding = _getElementData2.binding;
+
+        if (_binding.modifiers.image) {
+          event.dataTransfer.setDragImage(_binding.value.image, 10, 10);
         }
 
-        if (vnode.props.onVDragStart) {
-          vnode.props.onVDragStart(dragData, event);
-        }
+        (0, _common.emit)(el, 'onVDragStart', dragData, event);
       }, false);
       el.addEventListener('drag', function (event) {
-        if (binding.modifiers.dynamic) {
-          _common.default.transferredData[transferKey].namespace = _common.default.getNamespace(binding);
-        }
-
-        if (vnode.props.onVDragMove) {
-          vnode.props.onVDragMove(dataMap.get(el), event);
-        }
+        (0, _common.emit)(el, 'onVDragMove', getDragValue(el), event);
       });
       el.addEventListener('dragend', function (event) {
-        _common.default.dragInProgressKey = null;
+        (0, _common.setDragInProgressKey)(null);
 
-        if (_common.default.transferredData[transferKey]) {
-          if (typeof _common.default.transferredData[transferKey].onDropCallback === 'function') {
-            var callback = _common.default.transferredData[transferKey].onDropCallback;
+        if (_common.transferredData[transferKey]) {
+          if (typeof _common.transferredData[transferKey].onDropCallback === 'function') {
+            var callback = _common.transferredData[transferKey].onDropCallback;
             setTimeout(function () {
               return callback();
             }, 0);
           }
 
-          delete _common.default.transferredData[transferKey];
+          delete _common.transferredData[transferKey];
         }
 
-        if (vnode.props.onVDragEnd) {
-          vnode.props.onVDragEnd(dataMap.get(el), event);
-        }
+        (0, _common.emit)(el, 'onVDragEnd', getDragValue(el), event);
       });
     }
   };
@@ -266,61 +289,54 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     value: true
   });
   _exports.default = void 0;
-  _common = _interopRequireDefault(_common);
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   var _default = {
+    updated: function updated(el, binding, vnode) {
+      (0, _common.setElementData)(el, binding, vnode);
+    },
+    beforeUnmount: function beforeUnmount(el) {
+      (0, _common.forgetElement)(el);
+    },
     mounted: function mounted(el, binding, vnode) {
       function isDropAllowed() {
-        var dropTargetNamespace = _common.default.getNamespace(binding);
-
-        var namespace = _common.default.transferredData[_common.default.dragInProgressKey].namespace;
+        var dropTargetNamespace = (0, _common.getNamespace)(el);
+        var namespace = _common.transferredData[_common.dragInProgressKey].namespace;
         return !namespace || !dropTargetNamespace || namespace === dropTargetNamespace;
       }
 
+      (0, _common.setElementData)(el, binding, vnode);
       el.addEventListener('dragenter', function (event) {
         event.preventDefault();
-
-        if (vnode.props.onVDragEnter) {
-          var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
-          vnode.props.onVDragEnter(dragData, isDropAllowed(), event);
-        }
+        var dragData = _common.transferredData[_common.dragInProgressKey].dragData;
+        (0, _common.emit)(el, 'onVDragEnter', dragData, isDropAllowed(), event);
       }, false);
       el.addEventListener('dragover', function (event) {
-        var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
+        var dragData = _common.transferredData[_common.dragInProgressKey].dragData;
         var dropAllowed = isDropAllowed();
 
         if (dropAllowed) {
           event.preventDefault(); // required to allow dropping
         }
 
-        if (vnode.props.onVDragOver) {
-          vnode.props.onVDragOver(dragData, dropAllowed, event);
-        }
+        (0, _common.emit)(el, 'onVDragOver', dragData, dropAllowed, event);
       }, false);
       el.addEventListener('dragleave', function (event) {
         event.preventDefault();
-
-        if (vnode.props.onVDragLeave) {
-          var dragData = _common.default.transferredData[_common.default.dragInProgressKey].dragData;
-          vnode.props.onVDragLeave(dragData, isDropAllowed(), event);
-        }
+        var dragData = _common.transferredData[_common.dragInProgressKey].dragData;
+        (0, _common.emit)(el, 'onVDragLeave', dragData, isDropAllowed(), event);
       }, false);
       el.addEventListener('drop', function (event) {
+        if (!isDropAllowed()) {
+          return event.preventDefault();
+        }
+
         event.stopPropagation();
         event.preventDefault();
         var transferKey = event.dataTransfer.getData('text');
-        var dragData = _common.default.transferredData[transferKey].dragData;
+        var dragData = _common.transferredData[transferKey].dragData;
 
-        _common.default.transferredData[transferKey].onDropCallback = function () {
-          if (vnode.props.onVDragLeave) {
-            vnode.props.onVDragLeave(dragData, true, event);
-          }
-
-          if (vnode.props.onVDragDrop) {
-            vnode.props.onVDragDrop(dragData, true, event);
-          }
+        _common.transferredData[transferKey].onDropCallback = function () {
+          (0, _common.emit)(el, 'onVDragLeave', dragData, true, event);
+          (0, _common.emit)(el, 'onVDragDrop', dragData, true, event);
         };
       }, false);
     }
@@ -378,7 +394,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\OSS\v-drag-drop\src\index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! /srv/www/Projects/try-outs/v-drag-drop/src/index.js */"./src/index.js");
 
 
 /***/ })
